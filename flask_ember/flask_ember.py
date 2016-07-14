@@ -1,4 +1,4 @@
-from .resource_generator import ResourceGenerator
+from .generator import ResourceGenerator
 
 
 class FlaskEmber:

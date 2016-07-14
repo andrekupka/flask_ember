@@ -1,0 +1,1 @@
+from .resource_generator import ResourceGenerator
