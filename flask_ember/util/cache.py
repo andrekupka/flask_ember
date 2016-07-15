@@ -1,7 +1,7 @@
 class Cache:
-    def __init__(self, limit, function):
-        self.limit = limit
+    def __init__(self, function, limit=1000):
         self.function = function
+        self.limit = limit
         self.purge()
 
     def get(self, key):
