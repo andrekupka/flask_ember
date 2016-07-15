@@ -22,7 +22,8 @@ setup(
     platforms='any',
     test_suite='nose.collector',
     setup_requires=[
-        'nose>=1.0'
+        'nose>=1.0',
+        'rednose>=1.0'
     ],
     install_requires=[
         'Flask'
