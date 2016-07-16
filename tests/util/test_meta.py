@@ -28,6 +28,7 @@ class Child(Intermediate):
 
 
 class MetaTestCase(unittest.TestCase):
+
     def is_int(self, name, field):
         return isinstance(field, int)
 
