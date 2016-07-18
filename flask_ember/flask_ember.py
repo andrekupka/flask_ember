@@ -1,23 +1,44 @@
-from .database import FlaskEmberDatabase
-from .generator import ResourceGenerator
-from .model.generator import ModelGenerator
-from .model import ModelRegistry
-from .util.flask import get_current_app
+from flask_ember.database import FlaskEmberDatabase
+from flask_ember.generator import ResourceGenerator
+from flask_ember.model.generator import ModelGenerator
+from flask_ember.model import ModelRegistry
+from flask_ember.util.flask import get_current_app
 
 
 EXTENSION_NAME = 'ember'
 
 
 def get_ember(app=None):
+    """Returns the :class:`FlaskEmber` object that is registered with the given
+    :class:`flask.Flask` application. If None is given the current application
+    is used.
+
+    :param app: the Flask application
+    :type app: flask.Flask
+    :rtype: :class:`FlaskEmber`
+    """
     app = get_current_app(app, 'There is no application bound to the current '
                           'context.')
-    assert (app.extensions and EXTENSION_NAME in app.extensions,
-            'The flask_ember extension was not registered to the current '
-            'application. Please make sure to call init_app first.')
+    assert app.extensions and EXTENSION_NAME in app.extensions,\
+        ('The flask_ember extension was not registered to the current '
+         'application. Please make sure to call init_app first.')
     return app.extensions[EXTENSION_NAME]
 
 
 class FlaskEmber:
+    """The flask ember object implements the flask extension. It is the central
+    instance that manages backend databases and resources. It is initialized by
+    passing an :class:`flask.Flask` application or :class:`flask.Blueprint` to
+    either __init__, which will bind the flask ember instance to the single
+    application, or :meth:`init_app`, which can make this flask ember instance
+    usable by multiple applications.
+
+    :param app: the flask application object
+    :type app: flask.Flask
+    :param database_options: options that are passed to the internal database
+    :type database_options: dict
+    """
+
     def __init__(self, app=None, database_options=None):
         database_options = database_options or dict()
 
@@ -33,6 +54,12 @@ class FlaskEmber:
             self.init_app(app)
 
     def init_app(self, app):
+        """Initialize this class with the given :class:`flask.Flask`
+        application object.
+
+        :param app: the Flask application
+        :type app: flask.Flask
+        """
         if not hasattr(app, 'extensions'):
             app.extensions = dict()
         if EXTENSION_NAME in app.extensions:
@@ -45,6 +72,10 @@ class FlaskEmber:
         self.generate_resources(app)
 
     def get_database(self):
+        """Returns the internal database.
+
+        :rtype: :class:`database.FlaskEmberDatabase`
+        """
         return self.database
 
     def generate_resources(self, app):
