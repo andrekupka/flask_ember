@@ -5,10 +5,11 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import Query, scoped_session
 from threading import Lock
 
+from .declarative_model_meta import DeclarativeModelMeta
 from .engine_connector import EngineConnector
 from .flask_ember_session import FlaskEmberSession
+from .model_base import ModelBase
 from flask_ember.config import keys
-from flask_ember.model.declarative_resource_meta import DeclarativeResourceMeta
 
 
 ALL_TABLES_KEY = '__all__'
@@ -23,9 +24,10 @@ class FlaskEmberDatabase:
 
         # TODO define and construct proper declarative base, query and session
         # class, maybe extend query class by some methods in time
-        self.base_class = declarative_base(metaclass=DeclarativeResourceMeta)
-        self.query = Query
+        self.model_base = declarative_base(cls=ModelBase,
+                                                 metaclass=DeclarativeModelMeta)
         self.session = self.create_scoped_session()
+        self.model_base.query = self.session.query_property()
 
         self.connectors = dict()
         self.engine_lock = Lock()
@@ -47,9 +49,12 @@ class FlaskEmberDatabase:
     def create_session(self, options):
         return FlaskEmberSession(self, **options)
 
+    def get_model_base(self):
+        return self.model_base
+
     @property
     def metadata(self):
-        return self.base_class.metadata
+        return self.model_base.metadata
 
     @property
     def engine(self):

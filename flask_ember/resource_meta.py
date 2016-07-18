@@ -15,6 +15,7 @@ class ResourceMeta(type):
         klass._fields = get_class_fields(klass, mcs.is_field)
         klass._methods = get_class_methods(klass)
         print("\nMETA: %s with %s" % (name, mcs.__name__))
+        print(klass.__dict__)
         print(bases)
         print(attrs)
         print(klass._options)
