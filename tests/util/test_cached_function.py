@@ -1,13 +1,13 @@
 import unittest
 
-from flask_ember.util.cache import Cache
+from flask_ember.util.cached_function import CachedFunction
 
 
 class CacheTestCase(unittest.TestCase):
 
     def test_basic(self):
-        cache = Cache(lambda x: x * 2)
-        self.assertEqual(cache.get(1), 2)
+        function = CachedFunction(lambda x: x * 2)
+        self.assertEqual(function.get(1), 2)
 
     def test_caching(self):
         calculations = 0
@@ -17,7 +17,7 @@ class CacheTestCase(unittest.TestCase):
             calculations += 1
             return value * 2
 
-        function = Cache(cache_function)
+        function = CachedFunction(cache_function)
 
         self.assertEqual(function(2), 4)
         self.assertEqual(function(2), 4)

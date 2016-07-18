@@ -1,6 +1,6 @@
 import re
 
-from .cache import Cache
+from .cached_function import CachedFunction
 
 
 CAMELIZE_REGEXP_1 = re.compile(r'(\-|_|\.|\s)+(.)?')
@@ -60,9 +60,9 @@ def do_underscore(s):
     return s.lower()
 
 
-camelize = Cache(do_camelize)
-capitalize = Cache(do_capitalize)
-classify = Cache(do_classify)
-dasherize = Cache(do_dasherize)
-decamelize = Cache(do_decamelize)
-underscore = Cache(do_underscore)
+camelize = CachedFunction(do_camelize)
+capitalize = CachedFunction(do_capitalize)
+classify = CachedFunction(do_classify)
+dasherize = CachedFunction(do_dasherize)
+decamelize = CachedFunction(do_decamelize)
+underscore = CachedFunction(do_underscore)

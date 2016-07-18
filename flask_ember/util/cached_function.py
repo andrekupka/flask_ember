@@ -1,4 +1,7 @@
-class Cache:
+class CachedFunction:
+    """
+    """
+
     def __init__(self, function, limit=1000):
         self.function = function
         self.limit = limit
