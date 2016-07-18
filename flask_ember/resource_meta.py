@@ -10,11 +10,13 @@ class ResourceMeta(type):
 
     def __new__(mcs, name, bases, attrs):
         klass = super().__new__(mcs, name, bases, attrs)
+        if attrs.get('_is_model', False):
+            return klass
+        print("\nMETA: %s with %s" % (name, mcs.__name__))
         meta = attrs.get('Meta')
         klass._options = ResourceOptions(meta)
         klass._fields = get_class_fields(klass, mcs.is_field)
         klass._methods = get_class_methods(klass)
-        print("\nMETA: %s with %s" % (name, mcs.__name__))
         print(klass.__dict__)
         print(bases)
         print(attrs)
