@@ -26,7 +26,7 @@ setup(
         'rednose>=1.0'
     ],
     install_requires=[
-        'Flask'
+        'flask', 'flask-sqlalchemy'
     ],
     classifiers=[
         'Environment :: Web Environment',

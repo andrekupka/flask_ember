@@ -21,5 +21,5 @@ class Cache:
         self.size = 0
         self.store = dict()
 
-    def __call__(self):
-        return lambda key: self.get(key)
+    def __call__(self, key):
+        return self.get(key)

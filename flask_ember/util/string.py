@@ -60,17 +60,9 @@ def do_underscore(s):
     return s.lower()
 
 
-CAMELIZE_CACHE = Cache(do_camelize)
-CAPITALIZE_CACHE = Cache(do_capitalize)
-CLASSIFY_CACHE = Cache(do_classify)
-DASHERIZE_CACHE = Cache(do_dasherize)
-DECAMELIZE_CACHE = Cache(do_decamelize)
-UNDERSCORE_CACHE = Cache(do_underscore)
-
-
-camelize = CAMELIZE_CACHE()
-capitalize = CAPITALIZE_CACHE()
-classify = CLASSIFY_CACHE()
-dasherize = DASHERIZE_CACHE()
-decamelize = DECAMELIZE_CACHE()
-underscore = UNDERSCORE_CACHE()
+camelize = Cache(do_camelize)
+capitalize = Cache(do_capitalize)
+classify = Cache(do_classify)
+dasherize = Cache(do_dasherize)
+decamelize = Cache(do_decamelize)
+underscore = Cache(do_underscore)

@@ -17,7 +17,7 @@ class CacheTestCase(unittest.TestCase):
             calculations += 1
             return value * 2
 
-        function = Cache(cache_function)()
+        function = Cache(cache_function)
 
         self.assertEqual(function(2), 4)
         self.assertEqual(function(2), 4)
