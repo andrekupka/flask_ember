@@ -2,18 +2,19 @@ from .database import FlaskEmberDatabase
 from .generator import ResourceGenerator
 from .model.generator import ModelGenerator
 from .model import ModelRegistry
-
-from flask import _app_ctx_stack as ctx_stack
+from .util.flask import get_current_app
 
 
 EXTENSION_NAME = 'ember'
 
 
-def get_ember(app):
-    assert (EXTENSION_NAME in app.extension,
+def get_ember(app=None):
+    app = get_current_app(app, 'There is no application bound to the current '
+                          'context.')
+    assert (app.extensions and EXTENSION_NAME in app.extensions,
             'The flask_ember extension was not registered to the current '
             'application. Please make sure to call init_app first.')
-    return app.extension[EXTENSION_NAME]
+    return app.extensions[EXTENSION_NAME]
 
 
 class FlaskEmber:
@@ -55,17 +56,10 @@ class FlaskEmber:
         return self.model_generator.generate_abstract(resource_class)
 
     def resource(self, resource_class):
-        # TODO generate model here
         self.resources.append(resource_class)
         return self.model_generator.generate(resource_class)
 
     def get_app(self, reference_app=None):
-        if reference_app:
-            return reference_app
-        if self.app is not None:
-            return self.app
-        ctx = ctx_stack.top
-        if ctx is not None:
-            return ctx.app
-        raise RuntimeError('application is not registered and there is no '
-                           'application bound to the current context')
+        return get_current_app(reference_app or self.app, 'Application is '
+                               'not registered and there is no application '
+                               'bound to the current context.')
