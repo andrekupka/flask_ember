@@ -30,6 +30,7 @@ class ModelGenerator:
         class_dict = self.build_class_dict(resource_class, abstract=abstract)
 
         new_model_class = DeclarativeModelMeta("New" + model_name, bases, class_dict)
+        new_model_class.__doc__ = resource_class.__doc__
         self.registry[model_name] = new_model_class
         return new_model_class
 
