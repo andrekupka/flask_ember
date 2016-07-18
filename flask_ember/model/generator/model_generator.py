@@ -50,16 +50,24 @@ class ModelGenerator:
 
         class_dict['__abstract__'] = abstract
         if not abstract:
-            from flask_ember.util.string import underscore
-            tablename = (resource_class._options.tablename or
-                         underscore(resource_class.__name__))
-            class_dict['__tablename__'] = tablename
+            class_dict['__tablename__'] = self.get_table_name(resource_class)
 
         for field_name, field in resource_class._fields:
             class_dict[field_name] = sql.Column(field.create_sql_type(),
                                                 **field.column_options)
 
+        # TODO verify whether all methods are considered
         for method_name, method in resource_class._methods:
             class_dict[method_name] = method
 
+        # TODO transfer attributes that are no fields
+
         return class_dict
+
+    def get_table_name(self, resource_class):
+        tablename = resource_class._options.tablename
+        if tablename is None:
+            # this is save as tablename_function has a default value
+            tablename_generator = resource_class._options.tablename_generator
+            tablename = tablename_generator(resource_class.__name__)
+        return tablename
