@@ -10,6 +10,9 @@ class ResourceMeta(type):
 
     def __new__(mcs, name, bases, attrs):
         klass = super().__new__(mcs, name, bases, attrs)
+        # if this metaclass is applied to a generated model all the meta
+        # information must not be generated again, as it is already contained
+        # in the _resource_class member
         if attrs.get('_is_model', False):
             return klass
         print("\nMETA: %s with %s" % (name, mcs.__name__))
