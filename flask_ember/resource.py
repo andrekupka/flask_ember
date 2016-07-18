@@ -1,6 +1,9 @@
 from .resource_meta import ResourceMeta
-from .resource_options  import ResourceOptions
 
 
 class Resource(metaclass=ResourceMeta):
-    OPTIONS_CLASS = ResourceOptions
+    def parent_init(self, *args, **kwargs):
+        return self.parent().__init__(*args, **kwargs)
+
+    def parent(self):
+        return super(self.__class__, self)
