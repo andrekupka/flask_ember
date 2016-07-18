@@ -9,3 +9,7 @@ class FieldBase(metaclass=ABCMeta):
     @abstractmethod
     def create_sql_type(self):
         pass
+
+    @abstractmethod
+    def create_sql_column(self):
+        pass

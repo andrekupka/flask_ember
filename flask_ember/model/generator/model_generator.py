@@ -54,8 +54,7 @@ class ModelGenerator:
             class_dict['__tablename__'] = self.get_table_name(resource_class)
 
         for field_name, field in resource_class._fields:
-            class_dict[field_name] = sql.Column(field.create_sql_type(),
-                                                **field.column_options)
+            class_dict[field_name] = field.create_sql_column()
 
         # TODO verify whether all methods are considered
         for method_name, method in resource_class._methods:
