@@ -11,6 +11,7 @@ Extension
 ---------
 
 .. autoclass:: FlaskEmber
+   :show-inheritance:
    :members:
    :inherited-members:
    :undoc-members:
