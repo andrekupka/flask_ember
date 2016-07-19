@@ -39,7 +39,7 @@ class ResourceMeta(DeclarativeMeta):
         # TODO should fields be possibly in a base class
         fields = filter_dict_values(attrs, mcs.is_field)
         for field_name, field in fields.items():
-            attrs[field_name] = field.create_sql_column()
+            field.prepare_attributes(field_name, attrs)
         attrs['_fields'] = fields
 
     @classmethod
