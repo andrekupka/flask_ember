@@ -2,13 +2,12 @@ from functools import partial
 
 from flask import _app_ctx_stack as ctx_stack
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import Query, scoped_session
+from sqlalchemy.orm import scoped_session
 from threading import Lock
 
-from .declarative_model_meta import DeclarativeModelMeta
 from .engine_connector import EngineConnector
 from .flask_ember_session import FlaskEmberSession
-from .model_base import ModelBase
+from flask_ember.resource import ResourceBase, ResourceMeta
 from flask_ember.config import keys
 
 
@@ -24,18 +23,39 @@ class FlaskEmberDatabase:
 
         # TODO define and construct proper declarative base, query and session
         # class, maybe extend query class by some methods in time
-        self.model_base = declarative_base(cls=ModelBase,
-                                                 metaclass=DeclarativeModelMeta)
+        self.resource_base = self.create_resource_base()
         self.session = self.create_scoped_session()
-        self.model_base.query = self.session.query_property()
+        self.resource_base.query = self.session.query_property()
 
         self.connectors = dict()
         self.engine_lock = Lock()
 
+    def create_resource_base(self):
+        """Creates a declarative base for this database. It uses
+        :class:`ResourceBase` as base class.
+
+        :rtype: class
+        """
+        base = declarative_base(cls=ResourceBase, metaclass=ResourceMeta)
+        base._ember = self.ember
+        return base
+
     def init_app(self, app):
+        """Initializes this class with the given :class:`flask.Flask`
+        application object.
+
+        :param app: the Flask application
+        :type app: flask.Flask
+        """
         self.set_default_configuration(app)
 
     def set_default_configuration(self, app):
+        """Sets the default configuration options for the given
+        :class:`flask.Flask` application object.
+
+        :param app: the Flask application
+        :type app: flask.Flask
+        """
         app.config.setdefault(keys.EMBER_DATABASE_URI, 'sqlite://')
         app.config.setdefault(keys.EMBER_DATABASE_BINDS, None)
         app.config.setdefault(keys.EMBER_DATABASE_ECHO, False)
@@ -49,12 +69,12 @@ class FlaskEmberDatabase:
     def create_session(self, options):
         return FlaskEmberSession(self, **options)
 
-    def get_model_base(self):
-        return self.model_base
+    def get_resource_base(self):
+        return self.resource_base
 
     @property
     def metadata(self):
-        return self.model_base.metadata
+        return self.resource_base.metadata
 
     @property
     def engine(self):

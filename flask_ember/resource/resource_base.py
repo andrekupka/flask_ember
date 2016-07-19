@@ -1,5 +1,5 @@
 from .resource_meta import ResourceMeta
 
 
-class Resource(metaclass=ResourceMeta):
+class ResourceBase(metaclass=ResourceMeta):
     pass

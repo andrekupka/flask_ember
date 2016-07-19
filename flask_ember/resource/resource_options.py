@@ -6,7 +6,9 @@ OPTIONS = [
     # tablename_generator)
     ('tablename', None),
     # a function that takes the model class name and returns the table name
-    ('tablename_generator', underscore)
+    ('tablename_generator', underscore),
+    # if False a model is generate, otherwise not
+    ('abstract', False)
 ]
 
 

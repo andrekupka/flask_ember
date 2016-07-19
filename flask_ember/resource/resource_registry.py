@@ -1,5 +1,5 @@
 from collections import UserDict
 
 
-class ModelRegistry(UserDict):
+class ResourceRegistry(UserDict):
     pass

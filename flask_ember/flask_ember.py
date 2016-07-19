@@ -1,7 +1,6 @@
 from flask_ember.database import FlaskEmberDatabase
 from flask_ember.generator import ResourceGenerator
-from flask_ember.model.generator import ModelGenerator
-from flask_ember.model import ModelRegistry
+from flask_ember.resource import ResourceRegistry
 from flask_ember.util.flask import get_current_app
 
 
@@ -43,11 +42,10 @@ class FlaskEmber:
         database_options = database_options or dict()
 
         self.database = FlaskEmberDatabase(self, **database_options)
-        self.model_registry = ModelRegistry()
-        self.model_generator = ModelGenerator(self)
+        self.Resource = self.database.get_resource_base()
 
         # TODO manage resources in a proper way
-        self.resources = list()
+        self.resource_registry = ResourceRegistry()
 
         self.app = app
         if app is not None:
@@ -79,16 +77,13 @@ class FlaskEmber:
         return self.database
 
     def generate_resources(self, app):
-        for resource in self.resources:
+        for resource in self.resource_registry.values():
             generator = ResourceGenerator(self, resource)
             generator.generate(app)
 
-    def abstractresource(self, resource_class):
-        return self.model_generator.generate_abstract(resource_class)
-
-    def resource(self, resource_class):
-        self.resources.append(resource_class)
-        return self.model_generator.generate(resource_class)
+    def register_resource(self, resource_class):
+        print("Registered: %s" % resource_class.__name__)
+        self.resource_registry[resource_class.__name__] = resource_class
 
     def get_app(self, reference_app=None):
         return get_current_app(reference_app or self.app, 'Application is '
