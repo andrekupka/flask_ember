@@ -31,8 +31,11 @@ class ResourceDescriptor:
 
     # setup phase methods
 
-    def create_columns(self):
-        self.execute_builders('create_columns')
+    def create_primary_key_columns(self):
+        self.execute_builders('create_primary_key_columns')
+
+    def create_non_primary_key_columns(self):
+        self.execute_builders('create_non_primary_key_columns')
 
     def setup_table(self):
         tablename = self.options.get_tablename(self.resource.__name__)

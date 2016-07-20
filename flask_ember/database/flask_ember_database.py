@@ -117,10 +117,11 @@ class FlaskEmberDatabase:
 
     def generate_model(self, resource):
         print("Generating model for %s" % resource.__name__)
-
         self.remove_properties(resource)
 
-        generation_methods = ['create_columns', 'setup_table', 'setup_mapper']
+        generation_methods = ['create_primary_key_columns',
+                              'create_non_primary_key_columns', 'setup_table',
+                              'setup_mapper']
         for method_name in generation_methods:
             getattr(resource._descriptor, method_name)()
         resource._setup_done = True

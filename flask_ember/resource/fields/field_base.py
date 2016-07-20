@@ -71,12 +71,19 @@ class FieldBase(ResourceProperty):
         else:
             arguments['sql_options'] = sql_options
 
-    def create_columns(self):
+    def create_primary_key_columns(self):
+        self.create_column(True)
+
+    def create_non_primary_key_columns(self):
+        self.create_column(False)
+
+    def create_column(self, primary_key):
         # TODO incorporate the column_name option, therefore override the
         # register_with_descriptor method and add a property
-        column = sql.Column(self.name, self.create_sql_type(),
-                            **self.column_options)
-        self.add_table_column(column)
+        if self.column_options.get('primary_key', False) == primary_key:
+            column = sql.Column(self.name, self.create_sql_type(),
+                                **self.column_options)
+            self.add_table_column(column)
 
     def create_sql_type(self):
         """Creates the sqlalchemy type that represents this data field. The

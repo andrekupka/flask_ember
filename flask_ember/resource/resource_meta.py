@@ -42,6 +42,8 @@ class ResourceMeta(type):
 
     @staticmethod
     def collect_and_copy_properties(cls):
+        # TODO filter properties from base classes that are no resources and
+        # thus are no instance from ResourceMeta
         inherited_properties = get_inherited_attributes(cls,
                                                         ResourceMeta.is_property)
         base_properties = map(lambda prop: (prop[0], deepcopy(prop[1])),
