@@ -1,5 +1,4 @@
 from .boolean import Boolean
-from .data_field_base import DataFieldBase
 from .date import Date
 from .date_time import DateTime
 from .field_base import FieldBase

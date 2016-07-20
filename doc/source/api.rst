@@ -32,11 +32,6 @@ Fields
    :members:
    :inherited-members:
 
-.. autoclass:: DataFieldBase
-   :show-inheritance:
-   :members:
-   :inherited-members:
-
 Database
 --------
 

@@ -1,8 +1,8 @@
 from sqlalchemy import types
 
-from .data_field_base import DataFieldBase
+from .field_base import FieldBase
 
 
-class Float(DataFieldBase):
+class Float(FieldBase):
     __sql_type__ = types.Float
     __always_initialize_type__ = True

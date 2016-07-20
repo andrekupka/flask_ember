@@ -1,9 +1,9 @@
 from sqlalchemy import types
 
-from .data_field_base import DataFieldBase
+from .field_base import FieldBase
 
 
-class String(DataFieldBase):
+class String(FieldBase):
     __sql_type__ = types.String
 
     def __init__(self, length=None, *args, **kwargs):

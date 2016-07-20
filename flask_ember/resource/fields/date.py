@@ -1,8 +1,8 @@
 from sqlalchemy import types
 
-from .data_field_base import DataFieldBase
+from .field_base import FieldBase
 
 
-class Date(DataFieldBase):
+class Date(FieldBase):
     __sql_type__ = types.Date
     __dont_initialize_type__ = True

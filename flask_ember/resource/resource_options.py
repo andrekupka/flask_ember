@@ -20,5 +20,13 @@ class ResourceOptions:
         for option_key, default_value in options:
             setattr(self, option_key, getattr(meta, option_key, default_value))
 
+    def get_tablename(self, name):
+        tablename = self.tablename
+        if tablename is None:
+            # this is save as tablename_function has a default value
+            tablename = self.tablename_generator(name)
+        return tablename
+
     def __repr__(self):
+        # TODO improve representation
         return str(self.__dict__)

@@ -41,11 +41,12 @@ class FlaskEmber:
     def __init__(self, app=None, database_options=None):
         database_options = database_options or dict()
 
+        self.resource_registry = ResourceRegistry()
+
         self.database = FlaskEmberDatabase(self, **database_options)
         self.Resource = self.database.get_resource_base()
 
         # TODO manage resources in a proper way
-        self.resource_registry = ResourceRegistry()
 
         self.app = app
         if app is not None:
@@ -75,6 +76,19 @@ class FlaskEmber:
         :rtype: :class:`database.FlaskEmberDatabase`
         """
         return self.database
+
+    def get_resource_registry(self):
+        """Returns the internal resource registry.
+
+        :type: :class:`resource.ResourceRegistry`
+        """
+        return self.resource_registry
+
+    def get_resources(self):
+        return self.resource_registry.values()
+
+    def setup(self, create_tables=False):
+        self.database.setup_model(create_tables)
 
     def generate_resources(self, app):
         for resource in self.resource_registry.values():

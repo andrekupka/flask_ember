@@ -11,5 +11,5 @@ class ResourceGenerator:
         # TODO generation of api endpoints etc
         resource = self.resource_class
         name = resource.__qualname__
-        print("Generated %s" % name)
+        print("Generating route for %s" % name)
         app.add_url_rule('/' + dasherize(name), name, lambda: name)
