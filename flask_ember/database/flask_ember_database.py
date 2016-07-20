@@ -26,7 +26,7 @@ class FlaskEmberDatabase:
         # TODO define and construct proper declarative base, query and session
         # class, maybe extend query class by some methods in time
         self.metadata = MetaData()
-        self.session = self.create_scoped_session()
+        self.session = self.create_scoped_session(session_options)
         self.resource_base = self.create_resource_base()
 
         self.connectors = dict()
@@ -42,7 +42,6 @@ class FlaskEmberDatabase:
         class_dict = dict(
             _ember=self.ember,
             _metadata=self.metadata,
-            _registry=self.ember.get_resource_registry(),
             query=self.session.query_property()
         )
         class_dict['__init__'] = _declarative_constructor
