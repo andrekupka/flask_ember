@@ -42,6 +42,7 @@ class FlaskEmberDatabase:
         class_dict = dict(
             _ember=self.ember,
             _metadata=self.metadata,
+            _registry=self.ember.get_resource_registry(),
             query=self.session.query_property()
         )
         class_dict['__init__'] = _declarative_constructor
@@ -110,28 +111,28 @@ class FlaskEmberDatabase:
             self.create_all()
 
     def generate_all_models(self):
-        for resource in self.ember.get_resources():
-            if not resource._setup_done:
-                self.generate_model(resource)
+        resources = self.ember.get_resources()
+        self._remove_properties(resources)
+        self._generate_models(resources)
 
-    def generate_model(self, resource):
-        print("Generating model for %s" % resource.__name__)
-        self.remove_properties(resource)
+    def _remove_properties(self, resources):
+        for resource in resources:
+            to_delete = list()
+            for name, attr in resource.__dict__.items():
+                if isinstance(attr, ResourceProperty):
+                    to_delete.append(name)
+            for name in to_delete:
+                delattr(resource, name)
 
-        generation_methods = ['create_primary_key_columns',
-                              'create_non_primary_key_columns', 'setup_table',
-                              'setup_mapper']
+    def _generate_models(self, resources):
+        generation_methods = ['create_table', 'create_primary_key_columns',
+                              'create_non_primary_key_columns', 'setup_mapper',
+                              'setup_properties', 'finalize']
         for method_name in generation_methods:
-            getattr(resource._descriptor, method_name)()
-        resource._setup_done = True
+            for resource in resources:
+                if not resource._setup_done:
+                    getattr(resource._descriptor, method_name)()
 
-    def remove_properties(self, resource):
-        to_delete = list()
-        for name, attr in resource.__dict__.items():
-            if isinstance(attr, ResourceProperty):
-                to_delete.append(name)
-        for name in to_delete:
-            delattr(resource, name)
 
     def create_all(self, bind=ALL_TABLES_KEY, app=None):
         self._execute_for_all_tables(app, bind, 'create_all')

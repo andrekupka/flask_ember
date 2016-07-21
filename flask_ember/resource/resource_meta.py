@@ -1,9 +1,7 @@
 from copy import deepcopy
 
 from .resource_descriptor import ResourceDescriptor
-from .resource_options import ResourceOptions
 from .resource_property import ResourceProperty
-from flask_ember.resource.fields import FieldBase
 from flask_ember.util.meta import (get_class_attributes,
                                    get_inherited_attributes)
 

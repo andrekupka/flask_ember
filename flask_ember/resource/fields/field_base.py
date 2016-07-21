@@ -42,6 +42,7 @@ class FieldBase(ResourceProperty):
         #: :class:`sqlalchemy.Column`.
         self.column_options = column_options or dict()
         self._prepare_column_options(kwargs)
+        super().__init__()
 
     def _prepare_column_options(self, arguments):
         """Adds the arguments that are defined in
