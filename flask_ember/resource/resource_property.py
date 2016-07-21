@@ -27,3 +27,8 @@ class ResourceProperty(ResourceBuilder):
     def descriptor(self):
         assert self.resource is not None, 'Resource must be attached'
         return self.resource._descriptor
+
+    @property
+    def table(self):
+        assert self.resource is not None, 'Resource must be attached'
+        return self.resource._table

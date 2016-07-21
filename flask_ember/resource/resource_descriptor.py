@@ -22,13 +22,17 @@ class ResourceDescriptor:
 
         self.builders = list()
 
+    @property
+    def resource_name(self):
+        return self.resource.__name__
+
     def add_builder(self, builder):
         self.builders.append(builder)
 
     def add_column(self, column):
         if column.key in self.columns:
-            raise Exception('Duplicated column {} is not '
-                            'allowed'.format(column.key))
+            raise Exception("Duplicated column '{}' in resource '{}' is not "
+                            "allowed".format(column.key, self.resource_name))
         self.columns.add(column)
         if column.primary_key:
             self.has_primary_key = True
@@ -41,14 +45,14 @@ class ResourceDescriptor:
 
     def add_relationship(self, name, relationship):
         if name in self.relationships:
-            raise Exception('Duplicated relationship {} is not '
-                            'allowed'.format(name))
+            raise Exception("Duplicated relationship '{}' in resource '{}' is "
+                            "not allowed".format(name, self.resource_name))
         self.relationships[name] = relationship
 
     def add_property(self, name, prop):
         if name in self.properties:
-            raise Exception('Duplicate property {} is not '
-                            'allowed'.format(name))
+            raise Exception("Duplicate property '{}' in resource '{}' is not "
+                            "allowed".format(name))
         self.properties[name] = prop
         self.mapper.add_property(name, prop)
 
@@ -59,7 +63,7 @@ class ResourceDescriptor:
     # setup phase methods
 
     def create_table(self):
-        tablename = self.options.get_tablename(self.resource.__name__)
+        tablename = self.options.get_tablename(self.resource_name)
         self.table = Table(tablename, self.resource._metadata)
         self.resource._table = self.table
 

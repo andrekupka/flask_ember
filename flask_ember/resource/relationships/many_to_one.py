@@ -17,12 +17,11 @@ class ManyToOne(RelationshipBase):
 
         # create the target primary keys if they don't exist yet
         self.target._descriptor.create_primary_key_columns()
-        target_table = self.target._table
-        target_columns = target_table.primary_key.columns
+        target_columns = self.target_table.primary_key.columns
 
         if not target_columns:
             raise Exception("No primary key found in target table "
-                            "'{}' ".format(target_table.fullname))
+                            "'{}' ".format(self.target_table.fullname))
 
         foreign_key_names = list()
         foreign_key_ref_names = list()
@@ -33,18 +32,31 @@ class ManyToOne(RelationshipBase):
             self.descriptor.add_column(column)
 
             foreign_key_names.append(column.key)
-            foreign_key_ref_names.append('{}.{}'.format(target_table.fullname,
-                                                        target_column.key))
+            foreign_key_ref_names.append(
+                '{}.{}'.format(self.target_table.fullname, target_column.key))
             self.primary_join_clauses.append(column == target_column)
 
+        foreign_key_name = '_'.join(foreign_key_names)
+        constraint_name = '{}_{}_fk'.format(self.table.fullname,
+                                            foreign_key_name)
         constraint = ForeignKeyConstraint(foreign_key_names,
-                                          foreign_key_ref_names)
+                                          foreign_key_ref_names,
+                                          name=constraint_name)
         self.descriptor.add_constraint(constraint)
 
+    @property
+    def target_table(self):
+        return self.target._table
+
     def get_relation_kwargs(self):
-        relation_kwargs = super().get_relation_kwargs()
-        relation_kwargs.update(dict(
-            primaryjoin=and_(*self.primary_join_clauses),
-            lazy='select'
-        ))
-        return relation_kwargs
+        kwargs = super().get_relation_kwargs()
+        kwargs['lazy'] = 'select'
+        kwargs['primaryjoin'] = and_(*self.primary_join_clauses)
+
+        if self.target_table == self.table:
+            # If there is a self reference the remote side of the relation must
+            # be specified. The remote side consists of the primary key columns
+            # of this resource.
+            kwargs['remote_side'] = [column for column in
+                                     self.target_table.primary_key.columns]
+        return kwargs

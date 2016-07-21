@@ -2,6 +2,7 @@ from abc import abstractmethod
 from sqlalchemy.orm import backref, relationship
 
 from flask_ember.resource.resource_property import ResourceProperty
+from flask_ember.util.string import underscore
 
 
 class RelationshipBase(ResourceProperty):
@@ -41,11 +42,12 @@ class RelationshipBase(ResourceProperty):
         pass
 
     def get_relation_kwargs(self):
-        back_reference = None
-        if self.backref:
-            back_reference = backref(self.backref, lazy='dynamic')
+        # TODO if no backref is set use a proper plural, do we really want
+        # automatic generation
+        back_reference_name = (self.backref or
+                               underscore(self.resource.__name__) + 's')
         return dict(
-            backref=back_reference
+            backref=backref(back_reference_name, lazy='dynamic')
         )
 
     def create_properties(self):
