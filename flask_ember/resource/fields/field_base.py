@@ -1,9 +1,10 @@
 import sqlalchemy as sql
 
-from flask_ember.resource.resource_property import ResourceProperty
+from flask_ember.model.field_builder import FieldBuilder
+from flask_ember.resource.resource_property_base import ResourcePropertyBase
 
 
-class FieldBase(ResourceProperty):
+class FieldBase(ResourcePropertyBase):
     """Base class for data declarations in resources. A field describes a
     simple plain data sqlalchemy column. Therefore each field generates a
     :class:`sqlalchemy.Column` of the type that is specified in
@@ -44,6 +45,14 @@ class FieldBase(ResourceProperty):
         self._prepare_column_options(kwargs)
         super().__init__()
 
+    def do_register_at_descriptor(self, descriptor):
+        descriptor.add_field(self, self.name)
+
+    def create_property_builder(self):
+        return FieldBuilder(self.__sql_type__, not
+                            self.__dont_initialize_type__, self.sql_options,
+                            self.column_options, resource_property=self)
+
     def _prepare_column_options(self, arguments):
         """Adds the arguments that are defined in
         :const:`DIRECT_COLUMN_OPTIONS` and that are contained in the given
@@ -71,30 +80,3 @@ class FieldBase(ResourceProperty):
             arguments['sql_options'].update(sql_options)
         else:
             arguments['sql_options'] = sql_options
-
-    def create_primary_key_columns(self):
-        self.create_column(True)
-
-    def create_non_primary_key_columns(self):
-        self.create_column(False)
-
-    def create_column(self, primary_key):
-        # TODO incorporate the column_name option, therefore override the
-        # register_with_descriptor method and add a property
-        if self.column_options.get('primary_key', False) == primary_key:
-            column = sql.Column(self.name, self.create_sql_type(),
-                                **self.column_options)
-            self.add_table_column(column)
-
-    def create_sql_type(self):
-        """Creates the sqlalchemy type that represents this data field. The
-        type that shall be returned is specified by :const:`__sql_type__` of
-        subclasses. If :const:`__dont_initialize_type__` is set the type is
-        directly returned, otherwise the type's constructor is called and
-        :attr:`sql_options` is expanded as parameter.
-
-        :rtype: an sqlalchemy type
-        """
-        if self.__dont_initialize_type__:
-            return self.__sql_type__
-        return self.__sql_type__(**self.sql_options)

@@ -1,98 +1,31 @@
-from sqlalchemy import Table
-from sqlalchemy.orm import mapper
-from sqlalchemy.sql import ColumnCollection
-
 from .resource_options import ResourceOptions
+from flask_ember.model.model_builder import ModelBuilder
 
 
 class ResourceDescriptor:
 
     def __init__(self, resource):
         self.resource = resource
+        self.model_builder = ModelBuilder(resource)
         self.options = ResourceOptions(resource.__dict__.get('Meta', None))
 
-        self.columns = ColumnCollection()
-        self.constraints = list()
-        self.properties = dict()
-
+        self.fields = dict()
         self.relationships = dict()
 
-        self.has_primary_key = False
-        self.has_primary_keys_done = False
+    def add_field(self, field, name):
+        if name in self.fields:
+            raise Exception("Field '{}' already exists in resource "
+                            "'{}'.".format(name, self.resource_name))
+        self.fields[name] = field
+        self.model_builder.add_builder(field.get_builder())
 
-        self.builders = list()
+    def call_model_builder(self, operation):
+        if hasattr(self.model_builder, operation):
+            getattr(self.model_builder, operation)()
 
     @property
     def resource_name(self):
         return self.resource.__name__
-
-    def add_builder(self, builder):
-        self.builders.append(builder)
-
-    def add_column(self, column):
-        if column.key in self.columns:
-            raise Exception("Duplicated column '{}' in resource '{}' is not "
-                            "allowed".format(column.key, self.resource_name))
-        self.columns.add(column)
-        if column.primary_key:
-            self.has_primary_key = True
-
-        self.table.append_column(column)
-
-    def add_constraint(self, constraint):
-        self.constraints.append(constraint)
-        self.table.append_constraint(constraint)
-
-    def add_relationship(self, name, relationship):
-        if name in self.relationships:
-            raise Exception("Duplicated relationship '{}' in resource '{}' is "
-                            "not allowed".format(name, self.resource_name))
-        self.relationships[name] = relationship
-
-    def add_property(self, name, prop):
-        if name in self.properties:
-            raise Exception("Duplicate property '{}' in resource '{}' is not "
-                            "allowed".format(name))
-        self.properties[name] = prop
-        self.mapper.add_property(name, prop)
-
-    def find_relationship(self, name):
-        # TODO retrieve relationships from parent
-        return self.relationships.get(name)
-
-    # setup phase methods
-
-    def create_table(self):
-        tablename = self.options.get_tablename(self.resource_name)
-        self.table = Table(tablename, self.resource._metadata)
-        self.resource._table = self.table
-
-    def create_primary_key_columns(self):
-        # If the primary keys have already been generated indirectly by a
-        # related class abort.
-        if self.has_primary_keys_done:
-            return
-
-        self._execute_builders('create_primary_key_columns')
-        self.has_primary_keys_done = True
-
-    def create_non_primary_key_columns(self):
-        self._execute_builders('create_non_primary_key_columns')
-
-    def setup_mapper(self):
-        self.mapper = mapper(self.resource, self.resource._table)
-        self.resource._mapper = self.mapper
-
-    def setup_properties(self):
-        self._execute_builders('create_properties')
-
-    def finalize(self):
-        self.resource._setup_done = True
-
-    def _execute_builders(self, operation):
-        for builder in self.builders:
-            if hasattr(builder, operation):
-                getattr(builder, operation)()
 
     def __repr__(self):
         # TODO improve representation

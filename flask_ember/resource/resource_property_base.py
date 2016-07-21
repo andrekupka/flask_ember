@@ -1,32 +1,33 @@
-from .resource_builder import ResourceBuilder
+from abc import ABCMeta, abstractmethod
 
 
-class ResourceProperty(ResourceBuilder):
+class ResourcePropertyBase(metaclass=ABCMeta):
 
     def __init__(self):
         self.resource = None
         self.name = None
+        self.builder = self.create_property_builder()
 
     def register_at_descriptor(self, resource, name):
         self.resource = resource
         self.name = name
-        self.descriptor.add_builder(self)
+        self.do_register_at_descriptor(self.resource._descriptor)
 
-    def add_table_column(self, column):
-        self.descriptor.add_column(column)
+    @abstractmethod
+    def do_register_at_descriptor(self, descriptor):
+        pass
 
-    def add_mapper_property(self, name, prop):
-        self.descriptor.add_property(name, prop)
+    @abstractmethod
+    def create_property_builder(self):
+        pass
+
+    def get_builder(self):
+        return self.builder
 
     @property
     def registry(self):
         assert self.resource is not None, 'Resource must be attached'
         return self.resource._registry
-
-    @property
-    def descriptor(self):
-        assert self.resource is not None, 'Resource must be attached'
-        return self.resource._descriptor
 
     @property
     def table(self):

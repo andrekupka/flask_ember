@@ -2,8 +2,8 @@ from sqlalchemy.ext.declarative.base import _declarative_constructor
 
 from flask_ember.database import FlaskEmberDatabase
 from flask_ember.generator import ResourceGenerator
-from flask_ember.resource import (ResourceBase, ResourceMeta, ResourceProperty,
-                                  ResourceRegistry)
+from flask_ember.model import ModelGenerator
+from flask_ember.resource import (ResourceBase, ResourceMeta, ResourceRegistry)
 from flask_ember.util.flask import get_current_app
 
 
@@ -48,6 +48,8 @@ class FlaskEmber:
 
         self.database = FlaskEmberDatabase(self, **database_options)
         self.Resource = self.create_resource_base()
+
+        self.model_generator = ModelGenerator()
 
         # TODO manage resources in a proper way
 
@@ -101,7 +103,9 @@ class FlaskEmber:
         return self.resource_registry.values()
 
     def setup(self, create_tables=False):
-        self.database.setup_model(create_tables)
+        self.model_generator.generate_models(self.get_resources())
+        if create_tables:
+            self.database.create_all()
 
     def generate_resources(self, app):
         for resource in self.resource_registry.values():

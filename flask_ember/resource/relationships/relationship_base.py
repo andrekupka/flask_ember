@@ -1,10 +1,10 @@
 from abc import abstractmethod
 from sqlalchemy.orm import relationship
 
-from flask_ember.resource.resource_property import ResourceProperty
+from flask_ember.resource.resource_property_base import ResourcePropertyBase
 
 
-class RelationshipBase(ResourceProperty):
+class RelationshipBase(ResourcePropertyBase):
 
     def __init__(self, target_kind, backref):
         super().__init__()

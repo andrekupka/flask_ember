@@ -1,7 +1,7 @@
 from copy import deepcopy
 
 from .resource_descriptor import ResourceDescriptor
-from .resource_property import ResourceProperty
+from .resource_property_base import ResourcePropertyBase
 from flask_ember.util.meta import (get_class_attributes,
                                    get_inherited_attributes)
 
@@ -30,7 +30,7 @@ class ResourceMeta(type):
         cls._table = None
         cls._mapper = None
 
-        cls._setup_done = False
+        cls._model_generated = False
 
         properties = ResourceMeta.collect_and_copy_properties(cls)
         for name, prop in properties:
@@ -51,4 +51,4 @@ class ResourceMeta(type):
 
     @staticmethod
     def is_property(name, field):
-        return isinstance(field, ResourceProperty)
+        return isinstance(field, ResourcePropertyBase)

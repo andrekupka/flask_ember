@@ -8,7 +8,6 @@ from threading import Lock
 from .engine_connector import EngineConnector
 from .flask_ember_session import FlaskEmberSession
 from flask_ember.config import keys
-from flask_ember.resource import ResourceProperty
 
 
 ALL_TABLES_KEY = '__all__'
@@ -89,35 +88,6 @@ class FlaskEmberDatabase:
 
     def get_app(self, app=None):
         return self.ember.get_app(app)
-
-    def setup_model(self, create_tables=False):
-        self.generate_all_models()
-        if create_tables:
-            self.create_all()
-
-    def generate_all_models(self):
-        resources = self.ember.get_resources()
-        self._remove_properties(resources)
-        self._generate_models(resources)
-
-    def _remove_properties(self, resources):
-        for resource in resources:
-            to_delete = list()
-            for name, attr in resource.__dict__.items():
-                if isinstance(attr, ResourceProperty):
-                    to_delete.append(name)
-            for name in to_delete:
-                delattr(resource, name)
-
-    def _generate_models(self, resources):
-        generation_methods = ['create_table', 'create_primary_key_columns',
-                              'create_non_primary_key_columns', 'setup_mapper',
-                              'setup_properties', 'finalize']
-        for method_name in generation_methods:
-            for resource in resources:
-                if not resource._setup_done:
-                    getattr(resource._descriptor, method_name)()
-
 
     def create_all(self, bind=ALL_TABLES_KEY, app=None):
         self._execute_for_all_tables(app, bind, 'create_all')
