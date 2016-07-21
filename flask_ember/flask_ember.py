@@ -1,6 +1,9 @@
+from sqlalchemy.ext.declarative.base import _declarative_constructor
+
 from flask_ember.database import FlaskEmberDatabase
 from flask_ember.generator import ResourceGenerator
-from flask_ember.resource import ResourceRegistry
+from flask_ember.resource import (ResourceBase, ResourceMeta, ResourceProperty,
+                                  ResourceRegistry)
 from flask_ember.util.flask import get_current_app
 
 
@@ -44,7 +47,7 @@ class FlaskEmber:
         self.resource_registry = ResourceRegistry()
 
         self.database = FlaskEmberDatabase(self, **database_options)
-        self.Resource = self.database.get_resource_base()
+        self.Resource = self.create_resource_base()
 
         # TODO manage resources in a proper way
 
@@ -69,6 +72,16 @@ class FlaskEmber:
 
         self.database.init_app(app)
         self.generate_resources(app)
+
+    def create_resource_base(self):
+        bases = (ResourceBase,)
+        class_dict = dict(
+            _ember=self,
+            _registry=self.resource_registry
+        )
+        class_dict['__init__'] = _declarative_constructor
+        self.database.contribute_to_resource_base(class_dict)
+        return ResourceMeta('Base', bases, class_dict)
 
     def get_database(self):
         """Returns the internal database.

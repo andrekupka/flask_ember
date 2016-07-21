@@ -2,14 +2,13 @@ from functools import partial
 
 from flask import _app_ctx_stack as ctx_stack
 from sqlalchemy import MetaData
-from sqlalchemy.ext.declarative.base import _declarative_constructor
 from sqlalchemy.orm import scoped_session
 from threading import Lock
 
 from .engine_connector import EngineConnector
 from .flask_ember_session import FlaskEmberSession
-from flask_ember.resource import ResourceBase, ResourceMeta, ResourceProperty
 from flask_ember.config import keys
+from flask_ember.resource import ResourceProperty
 
 
 ALL_TABLES_KEY = '__all__'
@@ -27,26 +26,15 @@ class FlaskEmberDatabase:
         # class, maybe extend query class by some methods in time
         self.metadata = MetaData()
         self.session = self.create_scoped_session(session_options)
-        self.resource_base = self.create_resource_base()
 
         self.connectors = dict()
         self.engine_lock = Lock()
 
-    def create_resource_base(self):
-        """Creates a resource base for this database. It uses
-        :class:`ResourceBase` as base class.
-
-        :rtype: class
-        """
-        bases = (ResourceBase,)
-        class_dict = dict(
-            _ember=self.ember,
+    def contribute_to_resource_base(self, class_dict):
+        class_dict.update(dict(
             _metadata=self.metadata,
-            _registry=self.ember.get_resource_registry(),
             query=self.session.query_property()
-        )
-        class_dict['__init__'] = _declarative_constructor
-        return ResourceMeta('Base', bases, class_dict)
+        ))
 
     def init_app(self, app):
         """Initializes this class with the given :class:`flask.Flask`
@@ -76,9 +64,6 @@ class FlaskEmberDatabase:
 
     def create_session(self, options):
         return FlaskEmberSession(self, **options)
-
-    def get_resource_base(self):
-        return self.resource_base
 
     @property
     def engine(self):
