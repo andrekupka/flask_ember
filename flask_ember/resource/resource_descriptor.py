@@ -11,6 +11,9 @@ class ResourceDescriptor:
         self.fields = dict()
         self.relationships = dict()
 
+    def get_model_builder(self):
+        return self.model_builder
+
     def is_model_generated(self):
         return self.model_builder.is_finished()
 

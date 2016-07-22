@@ -20,7 +20,7 @@ class PropertyBuilderBase(metaclass=ABCMeta):
 
     @property
     def builder(self):
-        return self.resource._descriptor.model_builder
+        return self.resource._descriptor.get_model_builder()
 
     def add_table_column(self, column):
         self.builder.add_column(column)
