@@ -11,6 +11,9 @@ class ResourceDescriptor:
         self.fields = dict()
         self.relationships = dict()
 
+    def is_model_generated(self):
+        return self.model_builder.is_finished()
+
     def add_field(self, field, name):
         if name in self.fields:
             raise Exception("Field '{}' already exists in resource "

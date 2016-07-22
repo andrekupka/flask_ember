@@ -30,8 +30,6 @@ class ResourceMeta(type):
         cls._table = None
         cls._mapper = None
 
-        cls._model_generated = False
-
         properties = ResourceMeta.collect_and_copy_properties(cls)
         for name, prop in properties:
             prop.register_at_descriptor(cls, name)

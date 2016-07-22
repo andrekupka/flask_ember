@@ -7,5 +7,6 @@ class ModelGenerator:
                               'setup_properties', 'finalize']
         for method_name in generation_methods:
             for resource in resources:
-                if not resource._model_generated:
-                    resource._descriptor.call_model_builder(method_name)
+                descriptor = resource._descriptor
+                if not descriptor.is_model_generated():
+                    descriptor.call_model_builder(method_name)

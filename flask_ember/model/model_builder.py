@@ -9,6 +9,7 @@ class ModelBuilder:
 
     def __init__(self, resource):
         self.resource = resource
+        self.finished = False
 
         self.columns = ColumnCollection()
         self.constraints = list()
@@ -56,6 +57,9 @@ class ModelBuilder:
         self.properties[name] = prop
         self.mapper.add_property(name, prop)
 
+    def is_finished(self):
+        return self.finished
+
     # setup phase methods
 
     def prepare_resource(self):
@@ -91,7 +95,7 @@ class ModelBuilder:
         self._execute_builders('create_properties')
 
     def finalize(self):
-        self.resource._setup_done = True
+        self.finished = True
 
     def _execute_builders(self, operation):
         for builder in self.builders:
