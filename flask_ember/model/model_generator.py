@@ -1,4 +1,5 @@
 class ModelGenerator:
+
     def generate_models(self, resources):
         generation_methods = ['prepare_resource', 'create_table',
                               'create_primary_key_columns',

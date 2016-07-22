@@ -14,8 +14,6 @@ class ModelBuilder:
         self.constraints = list()
         self.properties = dict()
 
-        self.relationships = dict()
-
         self.has_primary_key = False
         self.has_primary_keys_done = False
 
@@ -36,12 +34,6 @@ class ModelBuilder:
     def add_builder(self, builder):
         self.builders.append(builder)
 
-    def add_relationship(self, name, relationship):
-        if name in self.relationships:
-            raise Exception("Duplicated relationship '{}' in resource '{}' is "
-                            "not allowed".format(name, self.resource_name))
-        self.relationships[name] = relationship
-
     def add_column(self, column):
         if column.key in self.columns:
             raise Exception("Duplicated column '{}' in resource '{}' is not "
@@ -53,6 +45,7 @@ class ModelBuilder:
         self.table.append_column(column)
 
     def add_constraint(self, constraint):
+        # TODO check for duplicate constraint name?
         self.constraints.append(constraint)
         self.table.append_constraint(constraint)
 

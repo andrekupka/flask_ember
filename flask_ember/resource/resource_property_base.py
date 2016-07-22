@@ -23,13 +23,3 @@ class ResourcePropertyBase(metaclass=ABCMeta):
 
     def get_builder(self):
         return self.builder
-
-    @property
-    def registry(self):
-        assert self.resource is not None, 'Resource must be attached'
-        return self.resource._registry
-
-    @property
-    def table(self):
-        assert self.resource is not None, 'Resource must be attached'
-        return self.resource._table

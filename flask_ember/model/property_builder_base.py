@@ -15,6 +15,10 @@ class PropertyBuilderBase(metaclass=ABCMeta):
         return self.resource_property.resource
 
     @property
+    def table(self):
+        return self.resource._table
+
+    @property
     def builder(self):
         return self.resource._descriptor.model_builder
 
