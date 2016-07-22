@@ -6,6 +6,10 @@ from .field_base import FieldBase
 class String(FieldBase):
     __sql_type__ = types.String
 
-    def __init__(self, length=None, *args, **kwargs):
-        self.add_sql_options(kwargs, length=length)
-        super().__init__(*args, **kwargs)
+    TYPE_OPTIONS = dict(
+        length=None
+    )
+
+    def __init__(self, length=None, **kwargs):
+        kwargs['length'] = length
+        super().__init__(allowed_type_options=String.TYPE_OPTIONS, **kwargs)
