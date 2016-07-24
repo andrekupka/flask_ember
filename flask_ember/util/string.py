@@ -61,8 +61,49 @@ def do_underscore(s):
 
 
 camelize = CachedFunction(do_camelize)
+camelize.__doc__ = """Camelizes the given string.
+
+:param string: The string that is to be camelized.
+:type string: str
+:rtype: str
+"""
+
 capitalize = CachedFunction(do_capitalize)
+capitalize.__doc__ = """Capitalizes the given string.
+
+:param string: The string that is to be capitalized.
+:type string: str
+:rtype: str
+"""
+
 classify = CachedFunction(do_classify)
+classify.__doc__ = """Classifies the given string.
+
+:param string: The string that is to be classified.
+:type string: str
+:rtype: str
+"""
+
 dasherize = CachedFunction(do_dasherize)
+dasherize.__doc__ = """Dasherizes the given string.
+
+:param string: The string that is to be dasherized.
+:type string: str
+:rtype: str
+"""
+
 decamelize = CachedFunction(do_decamelize)
+decamelize.__doc__ = """Decamelizes the given string.
+
+:param string: The string that is to be decamelized.
+:type string: str
+:rtype: str
+"""
+
 underscore = CachedFunction(do_underscore)
+underscore.__doc__ = """Underscores the given string.
+
+:param string: The string that is to be underscored.
+:type string: str
+:rtype: str
+"""

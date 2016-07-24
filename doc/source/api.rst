@@ -76,3 +76,21 @@ Collections
 .. module:: flask_ember.util.collections
 
 .. autofunction:: merge_dicts
+
+Meta
+^^^^
+
+.. automodule:: flask_ember.util.meta
+   :members:
+
+String
+^^^^^^
+
+.. module:: flask_ember.util.string
+
+.. autofunction:: camelize(string)
+.. autofunction:: capitalize(string)
+.. autofunction:: classify(string)
+.. autofunction:: dasherize(string)
+.. autofunction:: decamelize(string)
+.. autofunction:: underscore(string)

@@ -6,9 +6,9 @@ def merge_dicts(source, target, warning_message=None):
     warning message is set and an entry from the target dict is overwritten
     the warning message is printed.
 
-    :param source: The source dict to be merged from.
+    :param source: The source dict to merge from.
     :type source: dict
-    :param target: The target dict to be merged into.
+    :param target: The target dict to merge into.
     :type target: dict
     :param warning_message: The warning message that is displayed if an entry
                             in the target dict is overwritten. It must contain
