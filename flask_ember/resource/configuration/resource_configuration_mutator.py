@@ -1,7 +1,7 @@
-from flask_ember.dsl.resource_mutator import ResourceMutator
+from flask_ember.dsl.class_mutator_base import ClassMutatorBase
 
 
-class ResourceConfigurationMutator(ResourceMutator):
+class ResourceConfigurationMutator(ClassMutatorBase):
 
     def __init__(self, configurator_class):
         self.configurator_class = configurator_class

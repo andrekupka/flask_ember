@@ -1,1 +1,1 @@
-from .resource_mutator import ResourceMutator
+from .class_mutator_base import ClassMutatorBase
