@@ -1,4 +1,4 @@
-from sqlalchemy import and_, Column, ForeignKeyConstraint
+from sqlalchemy import Column, ForeignKeyConstraint, and_
 from sqlalchemy.orm import backref, relationship
 
 from .property_builder_base import PropertyBuilderBase
@@ -6,10 +6,11 @@ from .property_builder_base import PropertyBuilderBase
 
 class RelationshipBuilder(PropertyBuilderBase):
 
-    def __init__(self, backref, single_self=False, *args,
+    def __init__(self, backref, is_self_single_side, has_many_side=True, *args,
                  **kwargs):
         self.backref = backref
-        self.single_self = single_self
+        self.is_self_single_side = is_self_single_side
+        self.has_many_side = has_many_side
         self.primary_join_clauses = list()
         super().__init__(*args, **kwargs)
 
@@ -22,12 +23,12 @@ class RelationshipBuilder(PropertyBuilderBase):
         return self.target._table
 
     def _get_one_and_many_table(self):
-        if self.single_self:
+        if self.is_self_single_side:
             return self.table, self.target_table
         return self.target_table, self.table
 
     def _get_many_model_builder(self):
-        if self.single_self:
+        if self.is_self_single_side:
             return self.target._descriptor.model_builder
         return self.builder
 
@@ -64,19 +65,31 @@ class RelationshipBuilder(PropertyBuilderBase):
         builder.add_constraint(constraint)
 
     def _get_lazy_options(self):
-        if self.single_self:
+        if not self.has_many_side:
+            return 'select', 'select'
+        elif self.is_self_single_side:
             return 'select', 'dynamic'
         return 'dynamic', 'select'
 
+    def _get_uselist_option(self):
+        if not self.has_many_side:
+            return False, False
+        elif self.is_self_single_side:
+            return False, True
+        return True, False
+
     def _get_relation_kwargs(self):
         backref_lazy, lazy = self._get_lazy_options()
+        backref_uselist, uselist = self._get_uselist_option()
 
-        kwargs = dict(
-            lazy=lazy,
-            primaryjoin=and_(*self.primary_join_clauses)
-        )
+        kwargs = {
+            'lazy': lazy,
+            'uselist': uselist,
+            'primaryjoin': and_(*self.primary_join_clauses)
+        }
         if self.backref:
-            kwargs['backref'] = backref(self.backref, lazy=backref_lazy)
+            kwargs['backref'] = backref(self.backref, lazy=backref_lazy,
+                                        uselist=backref_uselist)
         if self.table == self.target_table:
             kwargs['remote_side'] = [column for column in
                                      self.table.primary_key.columns]
