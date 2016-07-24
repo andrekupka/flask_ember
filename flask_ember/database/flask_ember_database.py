@@ -30,10 +30,10 @@ class FlaskEmberDatabase:
         self.engine_lock = Lock()
 
     def contribute_to_resource_base(self, class_dict):
-        class_dict.update(dict(
-            _metadata=self.metadata,
-            query=self.session.query_property()
-        ))
+        class_dict.update({
+            '_metadata': self.metadata,
+            'query': self.session.query_property()
+        })
 
     def init_app(self, app):
         """Initializes this class with the given :class:`flask.Flask`
@@ -57,9 +57,9 @@ class FlaskEmberDatabase:
 
     def create_scoped_session(self, options=None):
         options = options or dict()
-        scopefunc = options.pop('scopefunc', None)
+        scope_function = options.pop('scopefunc', None)
         return scoped_session(partial(self.create_session, options),
-                              scopefunc=scopefunc)
+                              scopefunc=scope_function)
 
     def create_session(self, options):
         return FlaskEmberSession(self, **options)

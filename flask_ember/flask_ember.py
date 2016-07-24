@@ -77,11 +77,11 @@ class FlaskEmber:
 
     def create_resource_base(self):
         bases = (ResourceBase,)
-        class_dict = dict(
-            _ember=self,
-            _registry=self.resource_registry
-        )
-        class_dict['__init__'] = _declarative_constructor
+        class_dict = {
+            '_ember': self,
+            '_registry': self.resource_registry,
+            '__init__': _declarative_constructor
+        }
         self.database.contribute_to_resource_base(class_dict)
         return ResourceMeta('Base', bases, class_dict)
 
