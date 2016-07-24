@@ -3,8 +3,7 @@ from flask_ember.resource.resource_property_base import ResourcePropertyBase
 
 
 class FieldBase(ResourcePropertyBase):
-    """
-    Base class for data declarations in resources. A field describes a
+    """ Base class for data declarations in resources. A field describes a
     simple plain data column. Therefore each field generates a
     :class:`sqlalchemy.Column` of the type that is specified in
     :const:`__sql_type__`.
@@ -15,14 +14,14 @@ class FieldBase(ResourcePropertyBase):
     :type allowed_type_options: dict
     """
 
-    #: A dictionary that specifies all column options that can be passed
-    #: directly to the constructor of :class:`FieldBase`.
-    COLUMN_OPTIONS = dict(
-        primary_key=False,
-        nullable=True,
-        unique=False,
-        default=None
-    )
+    #: A list that specifies all column options that can be passed directly to
+    #: the constructor of :class:`FieldBase`.
+    COLUMN_OPTIONS = [
+        'primary_key',
+        'nullable',
+        'unique',
+        'default'
+    ]
 
     #: The sqlalchemy type that is used to describe this column.
     __sql_type__ = None
@@ -34,8 +33,12 @@ class FieldBase(ResourcePropertyBase):
         #: The options that are passed to the constructor of the created
         #: :class:`sqlalchemy.Column`.
         self.column_options = dict()
-        self._prepare_type_options(allowed_type_options or dict(), kwargs)
-        self._prepare_column_options(kwargs)
+        self._incorporate_options(allowed_type_options or list(),
+                                  self.type_options,
+                                  kwargs)
+        self._incorporate_options(FieldBase.COLUMN_OPTIONS,
+                                  self.column_options,
+                                  kwargs)
         super().__init__()
 
     def do_register_at_descriptor(self, descriptor):
@@ -45,21 +48,24 @@ class FieldBase(ResourcePropertyBase):
         return FieldBuilder(self.__sql_type__, self.type_options,
                             self.column_options, resource_property=self)
 
-    def _prepare_type_options(self, allowed_type_options, kwargs):
-        for option, default_value in allowed_type_options.items():
-            # TODO Some options might be contained or set as attribute as well,
-            # e.g. the length of a string which could also be used for
-            # validation purposes. Therefore simply popping options should be
-            # reconsidered.
-            self.type_options[option] = kwargs.pop(option, default_value)
+    def _incorporate_options(self, allowed_options, target_options, kwargs):
+        """ Extracts all given allowed options from kwargs and sets them in
+        the given target options. If an allowed option is not found in
+        kwargs it will not be set. All allowed options will be popped from
+        kwargs.
 
-    def _prepare_column_options(self, kwargs):
-        """Adds the arguments that are defined in :const:`COLUMN_OPTIONS` and
-        that are contained in the given arguments to the column options. If an
-        option is not contained in arguments its default value is set.
-
-        :param kwargs: the arguments from where options are extracted
+        :param allowed_options: The list of allowed options.
+        :type allowed_options: list
+        :param target_options: The dict where the allowed options are to be
+                               incorporated into.
+        :type target_options: dict
+        :param kwargs: The arguments where allowed options are popped from.
         :type kwargs: dict
         """
-        for option, default_value in FieldBase.COLUMN_OPTIONS.items():
-            self.column_options[option] = kwargs.pop(option, default_value)
+        for option in allowed_options:
+            # TODO some options may be preserved as attribute because they
+            # might be used later by the api or validation generation (e.g.
+            # nullable)
+            value = kwargs.pop(option, None)
+            if value is not None:
+                target_options[option] = value

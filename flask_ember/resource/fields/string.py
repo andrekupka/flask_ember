@@ -6,9 +6,7 @@ from .field_base import FieldBase
 class String(FieldBase):
     __sql_type__ = types.String
 
-    TYPE_OPTIONS = dict(
-        length=None
-    )
+    TYPE_OPTIONS = ['length']
 
     def __init__(self, length=None, **kwargs):
         kwargs['length'] = length

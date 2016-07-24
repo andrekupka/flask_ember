@@ -1,6 +1,8 @@
 from copy import deepcopy
 
 from flask_ember.dsl.resource_mutator import ResourceMutator
+from flask_ember.resource.configuration.resource_configurator_base import \
+    ResourceConfiguratorBase
 from flask_ember.util.meta import (get_class_attributes,
                                    get_inherited_attributes)
 from .resource_descriptor import ResourceDescriptor
@@ -32,6 +34,7 @@ class ResourceMeta(type):
 
         ResourceMeta.register_properties(cls)
         ResourceMutator.apply_mutators(cls)
+        ResourceConfiguratorBase.apply_configurators(cls)
 
         cls._ember.register_resource(cls)
 

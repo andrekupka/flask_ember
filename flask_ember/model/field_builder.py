@@ -13,14 +13,14 @@ class FieldBuilder(PropertyBuilderBase):
         super().__init__(*args, **kwargs)
 
     def override_type_options(self, extra_options):
-        warning_message = ('Overriding already set type option {{}} with {{}} '
-                           'for field {}.'.format(self.name))
+        warning_message = ("Overriding already set type option '{{}}' with "
+                           "'{{}}' for field '{}'.".format(self.name))
         merge_dicts(extra_options, self.type_options,
                     warning_message=warning_message)
 
     def override_column_options(self, extra_options):
-        warning_message = ('Overriding already set column option {{}} with {{'
-                           '}} for field {}.'.format(self.name))
+        warning_message = ("Overriding already set column option '{{}}' with "
+                           "'{{}}' for field '{}'.".format(self.name))
         merge_dicts(extra_options, self.column_options,
                     warning_message=warning_message)
 
