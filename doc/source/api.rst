@@ -3,15 +3,14 @@
 API
 ===
 
+Extension
+---------
+
 .. module:: flask_ember
 
 .. autofunction:: get_ember
 
-Extension
----------
-
 .. autoclass:: FlaskEmber
-   :show-inheritance:
    :members:
    :inherited-members:
 
@@ -21,6 +20,12 @@ Resource
 .. module:: flask_ember.resource
 
 .. autoclass:: ResourceBase
+
+.. autoclass:: ResourcePropertyBase
+   :members:
+
+.. autoclass:: ResourceDescriptor
+   :members:
 
 Fields
 ^^^^^^
@@ -47,7 +52,19 @@ DSL
 
 .. module:: flask_ember.dsl
 
-.. autoclass:: ResourceMutator
+.. autoclass:: ClassMutatorBase
+   :members:
+
+Model
+-----
+
+.. module:: flask_ember.model
+
+.. autoclass:: PropertyBuilderBase
+   :members:
+
+.. autoclass:: FieldBuilder
+   :show-inheritance:
    :members:
 
 Utilities

@@ -3,6 +3,7 @@ from .resource_options import ResourceOptions
 
 
 class ResourceDescriptor:
+
     def __init__(self, resource):
         self.resource = resource
         self.model_builder = ModelBuilder(resource)
@@ -45,6 +46,10 @@ class ResourceDescriptor:
 
     @property
     def resource_name(self):
+        """ Returns the name of the described resource.
+
+        :rtype: str
+        """
         return self.resource.__name__
 
     def __repr__(self):

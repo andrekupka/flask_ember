@@ -10,7 +10,8 @@ class ClassMutatorBase(metaclass=ABCMeta):
     using :meth:`apply_mutators`. In most cases this is done by a metaclass.
     """
 
-    #: The key that is used to store mutators as attribute in an resource.
+    #: The key that is used to store mutators as attribute in an class'
+    #: dictionary.
     KEY = '__mutators__'
 
     def __call__(self, *args, **kwargs):

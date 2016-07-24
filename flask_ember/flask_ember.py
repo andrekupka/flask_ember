@@ -46,13 +46,20 @@ class FlaskEmber:
 
         self.resource_registry = ResourceRegistry()
 
+        #: The internally used database abstraction.
         self.database = FlaskEmberDatabase(self, **database_options)
-        self.Resource = self.create_resource_base()
+        #: The generated base class to inherit from when creating custom
+        #: resources.
+        self.Resource = self._create_resource_base()
 
+        #: The internally used model generator which is responsible for
+        #: generating the backing sqlalchemy models of resources.
         self.model_generator = ModelGenerator()
 
         # TODO manage resources in a proper way
 
+        #: If an application is directly passed to this flask ember object
+        #: it will be stored here and initialized.
         self.app = app
         if app is not None:
             self.init_app(app)
@@ -75,7 +82,14 @@ class FlaskEmber:
         self.database.init_app(app)
         self.generate_resources(app)
 
-    def create_resource_base(self):
+    def _create_resource_base(self):
+        """ Creates the abstract resource base class that is finally
+        inherited from by user resources. While generating the base class
+        other instance like the internal database abstraction layer can
+        contribute properties to the dictionary of the generated class.
+
+        :rtype: ResourceMeta
+        """
         bases = (ResourceBase,)
         class_dict = {
             '_ember': self,
@@ -113,10 +127,26 @@ class FlaskEmber:
             generator.generate(app)
 
     def register_resource(self, resource_class):
-        print("Registered: %s" % resource_class.__name__)
+        """ Registers the given resource class and makes it thus known to
+        the central instance.
+
+        :param resource_class: The resource class that is to be registered.
+        :type resource_class: ResourceMeta
+        """
         self.resource_registry[resource_class.__name__] = resource_class
 
     def get_app(self, reference_app=None):
+        """ Returns the current application. If a reference application is
+        given it is directly returned, otherwise :attr:`app` is used. If
+        both is None an application from the flask application context stack
+        will be returned. For more details see
+        :meth:`util.flask.get_current_app`.
+
+        :param reference_app: The reference application that is directly
+                              returned.
+        :type reference_app: flask.Flask
+        :rtype: flask.Flask
+        """
         return get_current_app(reference_app or self.app, 'Application is '
                                'not registered and there is no application '
                                'bound to the current context.')

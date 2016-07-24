@@ -41,7 +41,7 @@ class FieldBase(ResourcePropertyBase):
                                   kwargs)
         super().__init__()
 
-    def do_register_at_descriptor(self, descriptor):
+    def register_at_descriptor(self, descriptor):
         descriptor.add_field(self, self.name)
 
     def create_property_builder(self):
