@@ -1,17 +1,17 @@
-import sqlalchemy as sql
-
 from flask_ember.model.field_builder import FieldBuilder
 from flask_ember.resource.resource_property_base import ResourcePropertyBase
 
 
 class FieldBase(ResourcePropertyBase):
-    """Base class for data declarations in resources. A field describes a
+    """
+    Base class for data declarations in resources. A field describes a
     simple plain data column. Therefore each field generates a
     :class:`sqlalchemy.Column` of the type that is specified in
     :const:`__sql_type__`.
 
     :param allowed_type_options: options that can be passed via **kwargs and
-        are directly passed to the generated sqlalchemy type
+                                 are directly passed to the generated
+                                 sqlalchemy type
     :type allowed_type_options: dict
     """
 
@@ -58,8 +58,8 @@ class FieldBase(ResourcePropertyBase):
         that are contained in the given arguments to the column options. If an
         option is not contained in arguments its default value is set.
 
-        :param kwargs: the arguments from where options are extracted :type
-        kwargs: dict
+        :param kwargs: the arguments from where options are extracted
+        :type kwargs: dict
         """
         for option, default_value in FieldBase.COLUMN_OPTIONS.items():
             self.column_options[option] = kwargs.pop(option, default_value)

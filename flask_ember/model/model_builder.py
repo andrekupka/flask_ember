@@ -71,7 +71,7 @@ class ModelBuilder:
             delattr(self.resource, name)
 
     def create_table(self):
-        tablename = self.options.get_tablename(self.resource_name)
+        tablename = self.options.get_table_name(self.resource_name)
         self.table = Table(tablename, self.resource._metadata)
         self.resource._table = self.table
 

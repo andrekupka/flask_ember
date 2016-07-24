@@ -41,3 +41,21 @@ Database
    :show-inheritance:
    :members:
    :inherited-members:
+
+DSL
+---
+
+.. module:: flask_ember.dsl
+
+.. autoclass:: ResourceMutator
+   :members:
+
+Utilities
+---------
+
+Collections
+^^^^^^^^^^^
+
+.. module:: flask_ember.util.collections
+
+.. autofunction:: merge_dicts

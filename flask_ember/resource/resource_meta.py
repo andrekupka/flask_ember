@@ -1,13 +1,13 @@
 from copy import deepcopy
 
-from .resource_descriptor import ResourceDescriptor
-from .resource_property_base import ResourcePropertyBase
+from flask_ember.dsl.resource_mutator import ResourceMutator
 from flask_ember.util.meta import (get_class_attributes,
                                    get_inherited_attributes)
+from .resource_descriptor import ResourceDescriptor
+from .resource_property_base import ResourcePropertyBase
 
 
 class ResourceMeta(type):
-
     def __init__(cls, name, bases, attrs):
         print("\nGenerating %s\n" % name)
         # TODO this check is a dirty hack and should be improved
@@ -30,11 +30,16 @@ class ResourceMeta(type):
         cls._table = None
         cls._mapper = None
 
+        ResourceMeta.register_properties(cls)
+        ResourceMutator.apply_mutators(cls)
+
+        cls._ember.register_resource(cls)
+
+    @staticmethod
+    def register_properties(cls):
         properties = ResourceMeta.collect_and_copy_properties(cls)
         for name, prop in properties:
             prop.register_at_descriptor(cls, name)
-
-        cls._ember.register_resource(cls)
 
     @staticmethod
     def collect_and_copy_properties(cls):
