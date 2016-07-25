@@ -23,6 +23,7 @@ class ResourceMeta(type):
     :param attrs: The attributes of the generated class.
     :type attrs: dict
     """
+
     def __init__(cls, name, bases, attrs):
         print("\nGenerating %s\n" % name)
         # TODO this check is a dirty hack and should be improved

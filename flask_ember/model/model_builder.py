@@ -6,6 +6,10 @@ from flask_ember.resource.resource_property_base import ResourcePropertyBase
 
 
 class ModelBuilder:
+    BUILD_STEPS = ['prepare_resource', 'create_table',
+                   'create_primary_key_columns',
+                   'create_non_primary_key_columns', 'setup_mapper',
+                   'setup_properties', 'finalize']
 
     def __init__(self, resource):
         self.resource = resource

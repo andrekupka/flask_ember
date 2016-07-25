@@ -1,7 +1,6 @@
 from .boolean import Boolean
 from .date import Date
 from .date_time import DateTime
-from .field_base import FieldBase
 from .float import Float
 from .integer import Integer
 from .interval import Interval

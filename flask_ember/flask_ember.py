@@ -1,9 +1,11 @@
 from sqlalchemy.ext.declarative.base import _declarative_constructor
 
-from flask_ember.database import FlaskEmberDatabase
-from flask_ember.generator import ResourceGenerator
-from flask_ember.model import ModelGenerator
-from flask_ember.resource import (ResourceBase, ResourceMeta, ResourceRegistry)
+from flask_ember.database.flask_ember_database import FlaskEmberDatabase
+from flask_ember.generator.resource_generator import ResourceGenerator
+from flask_ember.model.model_generator import ModelGenerator
+from flask_ember.resource.resource_base import ResourceBase
+from flask_ember.resource.resource_meta import ResourceMeta
+from flask_ember.resource.resource_registry import ResourceRegistry
 from flask_ember.util.flask import get_current_app
 
 
