@@ -37,6 +37,20 @@ Fields
    :members:
    :inherited-members:
 
+Configuration
+^^^^^^^^^^^^^
+
+.. module:: flask_ember.resource.configuration
+
+.. autoclass:: ResourceConfiguratorBase
+   :members:
+   :inherited-members:
+
+.. autoclass:: ResourceConfigurationMutator
+   :show-inheritance:
+   :members:
+   :inherited-members:
+
 Database
 --------
 

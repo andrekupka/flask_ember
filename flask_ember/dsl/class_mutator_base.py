@@ -46,6 +46,7 @@ class ClassMutatorBase(metaclass=ABCMeta):
         """ Applies all mutators that are registered at the given class to it.
 
         :param cls: The class to apply mutators to.
+        :type cls: type
         """
 
         # getattr is explicitly not used as this would inherit mutators
