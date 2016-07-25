@@ -2,7 +2,7 @@ from sqlalchemy.ext.declarative.base import _declarative_constructor
 
 from flask_ember.database.flask_ember_database import FlaskEmberDatabase
 from flask_ember.generator.resource_generator import ResourceGenerator
-from flask_ember.model.model_generator import ModelGenerator
+from flask_ember.model.model_builder import ModelBuilder
 from flask_ember.resource.resource_base import ResourceBase
 from flask_ember.resource.resource_meta import ResourceMeta
 from flask_ember.resource.resource_registry import ResourceRegistry
@@ -53,10 +53,6 @@ class FlaskEmber:
         #: The generated base class to inherit from when creating custom
         #: resources.
         self.Resource = self._create_resource_base()
-
-        #: The internally used model generator which is responsible for
-        #: generating the backing sqlalchemy models of resources.
-        self.model_generator = ModelGenerator()
 
         # TODO manage resources in a proper way
 
@@ -119,7 +115,7 @@ class FlaskEmber:
         return self.resource_registry.values()
 
     def setup(self, create_tables=False):
-        self.model_generator.generate_models(self.get_resources())
+        ModelBuilder.execute_build_steps(self.get_resources())
         if create_tables:
             self.database.create_all()
 

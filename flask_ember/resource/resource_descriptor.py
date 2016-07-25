@@ -40,10 +40,6 @@ class ResourceDescriptor:
     def get_property(self, name):
         return self.properties[name]
 
-    def call_model_builder(self, operation):
-        if hasattr(self.model_builder, operation):
-            getattr(self.model_builder, operation)()
-
     @property
     def resource_name(self):
         """ Returns the name of the described resource.
