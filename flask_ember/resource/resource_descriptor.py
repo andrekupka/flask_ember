@@ -1,23 +1,19 @@
 from flask_ember.model.model_builder import ModelBuilder
 from .resource_options import ResourceOptions
+from .resource_preparation_builder import ResourcePreparationBuilder
 
 
 class ResourceDescriptor:
 
     def __init__(self, resource):
         self.resource = resource
+        self.resource_preparer = ResourcePreparationBuilder(resource)
         self.model_builder = ModelBuilder(resource)
         self.options = ResourceOptions(resource.__dict__.get('Meta', None))
 
         self.properties = dict()
         self.fields = dict()
         self.relationships = dict()
-
-    def get_model_builder(self):
-        return self.model_builder
-
-    def is_model_generated(self):
-        return self.model_builder.is_finished()
 
     def add_field(self, field, name):
         if name in self.properties:
@@ -39,6 +35,14 @@ class ResourceDescriptor:
 
     def get_property(self, name):
         return self.properties[name]
+
+    def find_inverse_relationship(self, name, relationship):
+        for inverse_name, inverse in self.relationships.items():
+            # TODO match target types
+            if relationship.match_other(inverse) and relationship.backref == \
+                    inverse_name and inverse.backref == name:
+                return inverse
+        return None
 
     @property
     def resource_name(self):

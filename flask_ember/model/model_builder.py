@@ -30,7 +30,7 @@ class ModelBuilder(ResourceBuilderBase):
     # TODO where to parse options, extra model options class
     @property
     def options(self):
-        return self.resource._descriptor.options
+        return self.descriptor.options
 
     def add_builder(self, builder):
         self.builders.append(builder)
@@ -57,7 +57,7 @@ class ModelBuilder(ResourceBuilderBase):
         self.properties[name] = prop
         self.mapper.add_property(name, prop)
 
-    # setup phase methods
+    # build phase methods
 
     def prepare_resource(self):
         to_delete = list()
@@ -102,7 +102,7 @@ class ModelBuilder(ResourceBuilderBase):
 
     @staticmethod
     def execute_build_steps(resources):
-        get_builder = lambda res: res._descriptor.get_model_builder()
+        get_builder = lambda res: res._descriptor.model_builder
         model_builders = list(map(get_builder, resources))
         for build_step in ModelBuilder.BUILD_STEPS:
             for builder in model_builders:

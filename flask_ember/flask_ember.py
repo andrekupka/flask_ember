@@ -5,6 +5,7 @@ from flask_ember.generator.resource_generator import ResourceGenerator
 from flask_ember.model.model_builder import ModelBuilder
 from flask_ember.resource.resource_base import ResourceBase
 from flask_ember.resource.resource_meta import ResourceMeta
+from flask_ember.resource.resource_preparation_builder import ResourcePreparationBuilder
 from flask_ember.resource.resource_registry import ResourceRegistry
 from flask_ember.util.flask import get_current_app
 
@@ -115,7 +116,9 @@ class FlaskEmber:
         return self.resource_registry.values()
 
     def setup(self, create_tables=False):
-        ModelBuilder.execute_build_steps(self.get_resources())
+        resources = self.get_resources()
+        ResourcePreparationBuilder.execute_build_steps(resources)
+        ModelBuilder.execute_build_steps(resources)
         if create_tables:
             self.database.create_all()
 
