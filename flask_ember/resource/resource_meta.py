@@ -34,6 +34,7 @@ class ResourceMeta(type):
             return
 
         ResourceMeta.instrument_resource(cls)
+        super().__init__(name, bases, attrs)
 
     @staticmethod
     def instrument_resource(cls):
