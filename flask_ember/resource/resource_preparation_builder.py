@@ -5,7 +5,9 @@ class ResourcePreparationBuilder(ResourceBuilderBase):
     BUILD_STEPS = ['prepare_relationships', 'finalize']
 
     def prepare_relationships(self):
-        for relationship in self.descriptor.relationships.values():
+        # The size of the relationship dictionary may change as
+        # self-referential inverse relationships might be created.
+        for relationship in list(self.descriptor.relationships.values()):
             relationship.resolve_inverse_relationships()
 
     @staticmethod

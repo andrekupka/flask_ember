@@ -4,7 +4,6 @@ from .resource_preparation_builder import ResourcePreparationBuilder
 
 
 class ResourceDescriptor:
-
     def __init__(self, resource):
         self.resource = resource
         self.resource_preparer = ResourcePreparationBuilder(resource)
@@ -37,14 +36,30 @@ class ResourceDescriptor:
         return self.properties[name]
 
     def find_inverse_relationship(self, name, relationship):
+        """ Determines the matching inverse relationship for the given
+        relationship with the given property name.
+
+        :param name: The property name of the given relationship.
+        :type name: str
+        :param relationship: The relationship for whom the inverse is to be
+                             found.
+        :type relationship: RelationshipBase
+        :rtype: RelationshipBase
+        """
         inverse = None
         for other in self.relationships.values():
             if relationship.is_inverse(other):
-                if inverse is None:
+                if relationship.matching_backref_exists(other):
+                    return other
+                elif inverse is None:
                     inverse = other
                 else:
-                    assert False, "There are multiple matching inverse " \
-                                  "relationships."
+                    assert False, ("There are multiple matching inverse "
+                                   "relationships for relationship '{}' in "
+                                   "resource '{}'. Please specify an inverse "
+                                   "relationship explicitly with the "
+                                   "'backref' parameter.".format(
+                        name, self.resource_name))
         return inverse
 
     @property

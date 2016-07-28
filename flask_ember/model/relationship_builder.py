@@ -68,7 +68,7 @@ class RelationshipBuilder(PropertyBuilderBase):
         foreign_key_ref_names = list()
 
         for primary_column in primary_columns:
-            column_name = '{}_{}'.format(self.target_table.fullname,
+            column_name = '{}_{}'.format(self.name,
                                          primary_column.key)
             column = Column(column_name, primary_column.type)
             self.builder.add_column(column)

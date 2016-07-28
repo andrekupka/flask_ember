@@ -71,6 +71,15 @@ class RelationshipBase(ResourcePropertyBase):
                (self.backref is None or self.backref == other.name) and \
                (other.backref is None or other.backref == self.name)
 
+    def matching_backref_exists(self, other):
+        """ Returns whether this and the given relationship have a matching
+        backref in at least one direction.
+
+        :param other: The other relationship.
+        :rtype: bool
+        """
+        return self.backref == other.name or other.backref == self.name
+
     def _create_inverse_relationship(self):
         """ Creates a new inverse relationship for this. The type returned
         from :meth:`get_inverse_class` is used for creation.
