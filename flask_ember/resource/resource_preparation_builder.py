@@ -8,7 +8,7 @@ class ResourcePreparationBuilder(ResourceBuilderBase):
         # The size of the relationship dictionary may change as
         # self-referential inverse relationships might be created.
         for relationship in list(self.descriptor.relationships.values()):
-            relationship.resolve_inverse_relationships()
+            relationship.resolve_inverse()
 
     @staticmethod
     def execute_build_steps(resources):

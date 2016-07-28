@@ -1,8 +1,8 @@
 from flask_ember.model.relationship_builder import RelationshipBuilder
-from .relationship_base import RelationshipBase
+from .one_sided_relationship_base import OneSidedRelationshipBase
 
 
-class OneToOne(RelationshipBase):
+class OneToOne(OneSidedRelationshipBase):
     def __init__(self, target_kind, **kwargs):
         super().__init__(target_kind, **kwargs)
 

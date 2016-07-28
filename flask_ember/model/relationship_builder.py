@@ -20,10 +20,6 @@ class RelationshipBuilder(PropertyBuilderBase):
         return self.resource_property.inverse
 
     @property
-    def inverse_builder(self):
-        return self.inverse.builder
-
-    @property
     def target_table(self):
         return self.target._table
 
@@ -47,7 +43,7 @@ class RelationshipBuilder(PropertyBuilderBase):
             'back_populates': self.backref
         }
         clause_source = (self if self.generate_foreign_key else
-                         self.inverse_builder)
+                         self.inverse.builder)
         kwargs['primaryjoin'] = and_(*clause_source.primary_join_clauses)
 
         if self.table == self.target_table and not self.generate_foreign_key:
