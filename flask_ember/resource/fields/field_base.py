@@ -23,17 +23,21 @@ class FieldBase(ResourcePropertyBase):
         'default'
     ]
 
+    #: A list that specifies type options that are allowed for this field
+    #: type. Subclasses can override this field to allow type options.
+    __type_options__ = []
+
     #: The sqlalchemy type that is used to describe this column.
     __sql_type__ = None
 
-    def __init__(self, allowed_type_options=None, **kwargs):
+    def __init__(self, **kwargs):
         #: The options that are passed to the constructor of the created
         #: sqlalchemy type.
         self.type_options = dict()
         #: The options that are passed to the constructor of the created
         #: :class:`sqlalchemy.Column`.
         self.column_options = dict()
-        self._incorporate_options(allowed_type_options or list(),
+        self._incorporate_options(self.__type_options__,
                                   self.type_options,
                                   kwargs)
         self._incorporate_options(FieldBase.COLUMN_OPTIONS,
