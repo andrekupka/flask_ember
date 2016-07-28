@@ -5,6 +5,6 @@ class ResourceRegistry(UserDict):
     def resolve(self, target_kind):
         # TODO improve registry and resource resolution
         target = self.get(target_kind, None)
-        if target is None:
-            raise ValueError('Couldn\'t resolve target {}'.format(target_kind))
+        assert target is not None, "Couldn't resolve target: '{}'".format(
+            target_kind)
         return target

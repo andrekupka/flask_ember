@@ -6,8 +6,7 @@ from .property_builder_base import PropertyBuilderBase
 
 
 class RelationshipBuilder(PropertyBuilderBase):
-    def __init__(self, backref, use_list, *args, **kwargs):
-        self.backref = backref
+    def __init__(self, use_list, *args, **kwargs):
         self.use_list = use_list
         self.primary_join_clauses = list()
         super().__init__(*args, **kwargs)
@@ -27,6 +26,12 @@ class RelationshipBuilder(PropertyBuilderBase):
     @property
     def target_table(self):
         return self.target._table
+
+    @property
+    def backref(self):
+        # The backref of the underlying property may be set while initializing
+        # the resource. Therefore it has to be evaluated lazily.
+        return self.resource_property.backref
 
     @property
     def generate_foreign_key(self):

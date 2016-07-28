@@ -44,7 +44,7 @@ class FieldBase(ResourcePropertyBase):
     def register_at_descriptor(self, descriptor):
         descriptor.add_field(self, self.name)
 
-    def create_property_builder(self):
+    def create_builder(self):
         return FieldBuilder(self.__sql_type__, self.type_options,
                             self.column_options, resource_property=self)
 

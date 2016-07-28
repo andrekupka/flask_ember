@@ -37,18 +37,19 @@ class ResourceDescriptor:
         return self.properties[name]
 
     def find_inverse_relationship(self, name, relationship):
-        for inverse_name, inverse in self.relationships.items():
-            # TODO match target types
-            if relationship.match_other(inverse) and relationship.backref == \
-                    inverse_name and inverse.backref == name:
-                return inverse
-        return None
+        inverse = None
+        for other in self.relationships.values():
+            if relationship.is_inverse(other):
+                if inverse is None:
+                    inverse = other
+                else:
+                    assert False, "There are multiple matching inverse " \
+                                  "relationships."
+        return inverse
 
     @property
     def resource_name(self):
-        """ Returns the name of the described resource.
-
-        :rtype: str
+        """ The name of the described resource.
         """
         return self.resource.__name__
 

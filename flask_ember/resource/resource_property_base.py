@@ -6,7 +6,7 @@ class ResourcePropertyBase(metaclass=ABCMeta):
     attributes or relationships of a resource. Each property has to implement
     :meth:`register_at_descriptor` which registers the property in a
     suitable way at the resource's descriptor. For generating the sqlalchemy
-    model each property must implement :meth:`create_property_builder` which
+    model each property must implement :meth:`create_builder` which
     returns a :class:`flask_ember.model.PropertyBuilderBase` that is
     responsible for generating sqlalchemy columns and relationships.
     """
@@ -17,7 +17,13 @@ class ResourcePropertyBase(metaclass=ABCMeta):
         #: The name of this property within it's resource.
         self.name = None
         #: The builder that generates the sqlalchemy model.
-        self.builder = self.create_property_builder()
+        self.builder = self.create_builder()
+
+    @property
+    def resource_name(self):
+        """ The name of the resource.
+        """
+        return self.resource.__name__
 
     def register_at_resource(self, resource, name):
         """ Registers the property at the given resource. The registration
@@ -43,7 +49,7 @@ class ResourcePropertyBase(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def create_property_builder(self):
+    def create_builder(self):
         """ Creates a property builder that generates the sqlalchemy model.
         This method must be implemented by subclasses.
 

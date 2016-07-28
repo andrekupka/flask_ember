@@ -60,16 +60,13 @@ class ModelBuilder(ResourceBuilderBase):
     # build phase methods
 
     def prepare_resource(self):
-        to_delete = list()
-        for name, attr in self.resource.__dict__.items():
+        for name, attr in list(self.resource.__dict__.items()):
             if isinstance(attr, ResourcePropertyBase):
-                to_delete.append(name)
-        for name in to_delete:
-            delattr(self.resource, name)
+                delattr(self.resource, name)
 
     def create_table(self):
-        tablename = self.options.get_table_name(self.resource_name)
-        self.table = Table(tablename, self.resource._metadata)
+        table_name = self.options.get_table_name(self.resource_name)
+        self.table = Table(table_name, self.resource._metadata)
         self.resource._table = self.table
 
     def create_primary_key_columns(self):
