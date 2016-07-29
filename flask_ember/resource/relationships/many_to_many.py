@@ -6,7 +6,7 @@ from .relationship_base import RelationshipBase
 class ManyToMany(RelationshipBase):
     def __init__(self, target_kind, **kwargs):
         self.association_table = None
-        super().__init__(target_kind, **kwargs)
+        super().__init__(target_kind, is_many_side=True, **kwargs)
 
     def create_builder(self):
         return ManyToManyRelationshipBuilder(resource_property=self)

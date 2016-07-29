@@ -40,6 +40,12 @@ class PropertyBuilderBase(metaclass=ABCMeta):
         return self.resource._table
 
     @property
+    def metadata(self):
+        """ The sqlalchemy metadata.
+        """
+        return self.resource._metadata
+
+    @property
     def builder(self):
         """ The central model builder.
         """
