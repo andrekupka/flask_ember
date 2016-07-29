@@ -1,7 +1,7 @@
-from collections import UserDict
+from collections import OrderedDict
 
 
-class ResourceRegistry(UserDict):
+class ResourceRegistry(OrderedDict):
     def resolve(self, target_kind):
         # TODO improve registry and resource resolution
         target = self.get(target_kind, None)

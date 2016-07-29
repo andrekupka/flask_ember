@@ -47,6 +47,7 @@ class FlaskEmber:
     def __init__(self, app=None, database_options=None):
         database_options = database_options or dict()
 
+        # TODO manage resources in a proper way
         self.resource_registry = ResourceRegistry()
 
         #: The internally used database abstraction.
@@ -54,8 +55,6 @@ class FlaskEmber:
         #: The generated base class to inherit from when creating custom
         #: resources.
         self.Resource = self._create_resource_base()
-
-        # TODO manage resources in a proper way
 
         #: If an application is directly passed to this flask ember object
         #: it will be stored here and initialized.
