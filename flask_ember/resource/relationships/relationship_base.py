@@ -96,10 +96,12 @@ class RelationshipBase(ResourcePropertyBase):
         :type other: SingleSidedRelationshipBase
         :rtype: bool
         """
+        # 0) check that the given relation is not self
         # 1) match relation types
         # 2) match resource and target of inverse relation
         # 3) match backrefs if set
-        return self.match_other(other) and \
+        return self is not other and\
+               self.match_other(other) and \
                self.resource == other.target and \
                self.target == other.resource and \
                (self.backref is None or self.backref == other.name) and \
