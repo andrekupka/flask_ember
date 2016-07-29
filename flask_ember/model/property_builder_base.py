@@ -30,6 +30,10 @@ class PropertyBuilderBase(metaclass=ABCMeta):
         return self.resource_property.resource
 
     @property
+    def resource_name(self):
+        return self.resource.__name__
+
+    @property
     def table(self):
         """ The generated sqlalchemy table that maps the resource.
         """
@@ -46,6 +50,12 @@ class PropertyBuilderBase(metaclass=ABCMeta):
 
     def add_mapper_property(self, name, prop):
         self.builder.add_property(name, prop)
+
+    def create_association_tables(self):
+        """ Creates association tables for a property (mainly
+        relationships). Can be overridden by subclasses.
+        """
+        pass
 
     def create_primary_key_columns(self):
         """ Creates primary key columns for a property. Can be overridden by

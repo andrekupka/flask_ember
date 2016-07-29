@@ -8,7 +8,7 @@ from flask_ember.resource.resource_property_base import ResourcePropertyBase
 
 class ModelBuilder(ResourceBuilderBase):
     BUILD_STEPS = ['prepare_resource', 'create_table',
-                   'create_primary_key_columns',
+                   'create_association_tables', 'create_primary_key_columns',
                    'create_non_primary_key_columns', 'setup_mapper',
                    'setup_properties', 'finalize']
 
@@ -68,6 +68,9 @@ class ModelBuilder(ResourceBuilderBase):
         table_name = self.options.get_table_name(self.resource_name)
         self.table = Table(table_name, self.resource._metadata)
         self.resource._table = self.table
+
+    def create_association_tables(self):
+        self._execute_builders('create_association_tables')
 
     def create_primary_key_columns(self):
         # If the primary keys have already been generated indirectly by a
