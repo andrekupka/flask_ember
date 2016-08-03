@@ -30,19 +30,20 @@ class ManyToManyRelationshipBuilder(RelationshipBuilderBase):
                                                             'table yet.'
         return self._association_builder_proxy
 
+    def _get_association_table_name(self):
+        first = (underscore(self.resource_name), self.name)
+        second = (underscore(self.inverse.resource_name), self.inverse.name)
+        if first > second:
+            first, second = second, first
+        return '{}_{}_{}_{}_association'.format(*(first + second))
+
     def create_association_tables(self):
         # If the inverse relation has already created the association table
         # this step is obsolete.
         if self.association_table is not None:
             return
 
-        source_name = underscore(self.resource_name)
-        target_name = underscore(self.inverse.resource_name)
-        table_name = ('{}_{}_{}_{}_association'.format(source_name,
-                                                       self.name,
-                                                       target_name,
-                                                       self.inverse.name))
-        table = Table(table_name, self.metadata)
+        table = Table(self._get_association_table_name(), self.metadata)
         self.association_table = table
         self.inverse.builder.association_table = table
 
