@@ -11,6 +11,10 @@ class ResourcePropertyBase(metaclass=ABCMeta):
     responsible for generating sqlalchemy columns and relationships.
     """
 
+    #: The global index counter that is used for sorting properties in
+    #: resources.
+    __creation_index_counter__ = 0
+
     def __init__(self):
         #: The resource this property is registered at.
         self.resource = None
@@ -18,6 +22,9 @@ class ResourcePropertyBase(metaclass=ABCMeta):
         self.name = None
         #: The builder that generates the sqlalchemy model.
         self.builder = self.create_builder()
+        #: A global index that is used to sort properties within resources.
+        self._creation_index = ResourcePropertyBase.__creation_index_counter__
+        ResourcePropertyBase.__creation_index_counter__ += 1
 
     @property
     def resource_name(self):

@@ -87,11 +87,15 @@ class ResourceMeta(type):
         """
         # TODO filter properties from base classes that are no resources and
         # thus are no instance from ResourceMeta
+        property_order = lambda pair: pair[1]._creation_index
         inherited_properties = get_inherited_attributes(
-            cls, ResourceMeta.is_property)
+            cls, ResourceMeta.is_property, order=property_order)
         base_properties = map(lambda prop: (prop[0], deepcopy(prop[1])),
                               inherited_properties)
-        properties = get_class_attributes(cls, ResourceMeta.is_property)
+        properties = get_class_attributes(cls, ResourceMeta.is_property,
+                                          order=property_order)
+        print(list(base_properties))
+        print(properties)
         return list(base_properties) + properties
 
     @staticmethod
