@@ -216,8 +216,3 @@ class RelationshipBase(ResourcePropertyBase):
 
         self.init_inverse(inverse, first=True)
         inverse.init_inverse(self, first=False)
-        self.info()
-        inverse.info()
-
-    def info(self):
-        print("%s.%s primary=%r" % (self.resource_name, self.name, self.primary))

@@ -67,8 +67,6 @@ class RelationshipBuilderBase(PropertyBuilderBase):
         constraint_name = '{}_{}_fk'.format(self.table.fullname,
                                             foreign_key_name)
 
-        args = self.get_foreign_key_arguments()
-        print("%s.%s fk %r"  % (self.resource_name, self.name, args))
         constraint = ForeignKeyConstraint(foreign_key_names,
                                           foreign_key_ref_names,
                                           name=constraint_name,
@@ -84,7 +82,5 @@ class RelationshipBuilderBase(PropertyBuilderBase):
         return kwargs
 
     def create_properties(self):
-        relation_kwargs = self.get_relation_arguments()
-        print("%s.%s rel %r" % (self.resource_name, self.name, relation_kwargs))
-        relation = relationship(self.target, **relation_kwargs)
+        relation = relationship(self.target, **self.get_relation_arguments())
         self.add_mapper_property(self.name, relation)

@@ -1,3 +1,4 @@
+from collections import OrderedDict
 from flask_ember.model.model_builder import ModelBuilder
 from .resource_options import ResourceOptions
 from .resource_preparation_builder import ResourcePreparationBuilder
@@ -10,9 +11,9 @@ class ResourceDescriptor:
         self.model_builder = ModelBuilder(resource)
         self.options = ResourceOptions(resource.__dict__.get('Meta', None))
 
-        self.properties = dict()
-        self.fields = dict()
-        self.relationships = dict()
+        self.properties = OrderedDict()
+        self.fields = OrderedDict()
+        self.relationships = OrderedDict()
 
     def add_field(self, field, name):
         if name in self.properties:

@@ -94,9 +94,7 @@ class ResourceMeta(type):
                               inherited_properties)
         properties = get_class_attributes(cls, ResourceMeta.is_property,
                                           order=property_order)
-        print(list(base_properties))
-        print(properties)
-        return list(base_properties) + properties
+        return list(base_properties) + list(properties)
 
     @staticmethod
     def is_property(name, attribute):
