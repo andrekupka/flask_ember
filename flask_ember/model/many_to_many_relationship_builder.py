@@ -46,10 +46,16 @@ class ManyToManyRelationshipBuilder(RelationshipBuilderBase):
         self.association_table = table
         self.inverse.builder.association_table = table
 
+    def get_foreign_key_arguments(self):
+        kwargs = super().get_foreign_key_arguments()
+        kwargs['ondelete'] = 'CASCADE'
+        return kwargs
+
     def get_relation_arguments(self):
         kwargs = super().get_relation_arguments()
         kwargs['secondary'] = self.association_table
         kwargs['primaryjoin'] = and_(
             *self.inverse.builder.join_clauses)
         kwargs['secondaryjoin'] = and_(*self.join_clauses)
+        kwargs['cascade'] = 'all'
         return kwargs

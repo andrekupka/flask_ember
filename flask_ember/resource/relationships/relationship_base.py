@@ -22,10 +22,10 @@ class RelationshipBase(ResourcePropertyBase):
         :type is_many_side: bool
         """
 
-    def __init__(self, target_kind, backref=None, is_many_side=None):
+    def __init__(self, target_kind, backref=None, primary=None):
         self.target_kind = target_kind
         self.backref = backref
-        self.is_many_side = is_many_side
+        self.primary = primary
         self._target = None
         self._inverse = None
         super().__init__()
@@ -60,7 +60,7 @@ class RelationshipBase(ResourcePropertyBase):
         assertion is triggered.
 
         :param inverse: The new inverse relationship.
-        :type inverse: SingleSidedRelationshipBase
+        :type inverse: RelationshipBase
         """
         assert not self.inverse, ("Relationship '{}' in resource '{}' already "
                                   "has a inverse relationship set.".format(
@@ -83,24 +83,24 @@ class RelationshipBase(ResourcePropertyBase):
         instance of the type returned by :meth:`get_inverse_class`.
 
         :param other: The other relationship.
-        :type other: SingleSidedRelationshipBase
+        :type other: RelationshipBase
         :rtype: bool
         """
         return isinstance(other, self.get_inverse_class())
 
     def is_inverse(self, other):
-        """ Returns whether the given relationship is a matching inverse
-        for this.
+        """ Returns whether the given relationship is a matching inverse for
+        this.
 
         :param other: The other relationship.
-        :type other: SingleSidedRelationshipBase
+        :type other: RelationshipBase
         :rtype: bool
         """
         # 0) check that the given relation is not self
         # 1) match relation types
         # 2) match resource and target of inverse relation
         # 3) match backrefs if set
-        return self is not other and\
+        return self is not other and \
                self.match_other(other) and \
                self.resource == other.target and \
                self.target == other.resource and \
@@ -128,31 +128,64 @@ class RelationshipBase(ResourcePropertyBase):
             return self.resource._registry.resolve(self.target_kind)
         return self.target_kind
 
+
+    @abstractmethod
+    def get_inverse_arguments(self):
+        """ Returns the keyword arguments that are passed to the inverse
+        relationship if one has to be created.
+
+        :rtype: dict
+        """
+        pass
+
     def _create_inverse_relationship(self):
         """ Creates a new inverse relationship for this. The type returned
-        from :meth:`get_inverse_class` is used for creation.
+        from :meth:`get_inverse_class` is used for creation. The
+        created inverse relationship is initialized with this relationship's
+        resource and its name as backref. The dictionary returned from
+        :meth:`get_inverse_arguments` is passed as keyword arguments.
 
-        :rtype: OneSidedRelationshipBase
+        :rtype: RelationshipBase
         """
         inverse_class = self.get_inverse_class()
-        return inverse_class(self.resource, backref=self.name)
+        return inverse_class(self.resource, backref=self.name,
+                             **self.get_inverse_arguments())
 
-    def init_inverse(self, inverse, is_many_side):
+    def check_compatibility(self, inverse):
+        """ Checks whether this relationship is compatible with the given
+        inverse one. If it is not an exception is to be thrown. This method
+        can be overridden by subclasses.
+
+        :param inverse: The inverse relationship.
+        :type inverse: RelationshipBase
+        """
+        pass
+
+    def init_inverse(self, inverse, first):
         """ Initializes the inverse relationship with the given one. If this
-        relationship has no backref set it will be set now. If this
-        relationship has not yet determined whether it is the one or many side,
-        it will be set to the given value.
+        relationship has no backref set it will be set now.
 
         :param inverse: The new inverse relationship.
-        :type inverse: OneSidedRelationshipBase
-        :param is_many_side: Whether this relationship may be the many side.
-        :type is_many_side: bool
+        :type inverse: RelationshipBase
+        :param first: Whether this side of the relationship is the one that
+                      is initialized first.
+        :type first: bool
         """
         self.inverse = inverse
         if self.backref is None:
             self.backref = inverse.name
-        if self.is_many_side is None:
-            self.is_many_side = is_many_side
+        if first:
+            self.configure_inverse(inverse)
+
+    def configure_inverse(self, inverse):
+        """ Configures this and the given inverse relationship. This method
+        can be overridden by subclasses. This method is used to update the
+        configuration of
+
+        :param inverse: The inverse relationship.
+        :type inverse: RelationshipBase
+        """
+        pass
 
     def resolve_inverse(self):
         """ Resolves the inverse relationship. If this relationship already
@@ -170,7 +203,9 @@ class RelationshipBase(ResourcePropertyBase):
 
         inverse = self.target_descriptor.find_inverse_relationship(
             self.name, self)
-        if not inverse:
+        if inverse:
+            self.check_compatibility(inverse)
+        else:
             if self.backref is None:
                 assert False, "No inverse could be determined for " \
                               "relationship '{}' in resource '{}' and there " \
@@ -179,5 +214,10 @@ class RelationshipBase(ResourcePropertyBase):
             inverse = self._create_inverse_relationship()
             inverse.register_at_resource(self.target, self.backref)
 
-        self.init_inverse(inverse, is_many_side=True)
-        inverse.init_inverse(self, is_many_side=False)
+        self.init_inverse(inverse, first=True)
+        inverse.init_inverse(self, first=False)
+        self.info()
+        inverse.info()
+
+    def info(self):
+        print("%s.%s primary=%r" % (self.resource_name, self.name, self.primary))
